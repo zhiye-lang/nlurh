@@ -6,7 +6,6 @@
     🇨🇳 中文 (Gitee)
   </a>
 </div>
-------
 
 # Zhiye-Y Language Basics
 
