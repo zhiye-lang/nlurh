@@ -6,7 +6,6 @@
     🇨🇳 中文 (Gitee)
   </a>
 </div>
-------
 
 # UI Component Library ui.dll Usage Guide
 

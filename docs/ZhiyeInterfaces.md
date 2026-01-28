@@ -3,9 +3,12 @@
   <a href="https://gitee.com/sz-ai/nlurh/blob/master/docs/%E6%94%AF%E5%8F%B6%E5%B9%B3%E5%8F%B0%E6%8E%A5%E5%8F%A3.md" 
      target="_blank" 
      style="margin-left: 10px;">
-    🇨🇳 中文 (Gitee 支叶自带接口.md)
+    🇨🇳 中文 (Gitee)
   </a>
 </div>
+
+------
+
 # Description of Built-in Interface Functions for the Zhiye Integration Platform
 
 Definition and usage instructions for Y language interfaces.
