@@ -175,7 +175,7 @@ extern void sz_add_next(ExpUnit* pStar, ExpUnit* pAdd);
 extern ExpUnit* sz_parsing_unit(ExpUnit* pUNIT);
 extern intptr_t sz_get_unit_result(ExpUnit* pUNIT);
 extern void sz_put_unit(char* pTitle, u8 NoSpace, ExpUnit* pUnit);
-extern int sz_str_run(EnvP pEnv, const char* pStrFun, ExpUnit* par);
+ExpUnit* sz_str_run(EnvP pEnv,const char *pStrFun,ExpUnit* par,int num)
 extern DataBufStr* sz_read_file(const char* pathName);
 extern intptr_t sz_save_file(const char* pathName, DataBufStr* pBfS);
 extern int sz_input(const char* title, char* pOut, int oSize);

@@ -4,8 +4,10 @@ loadlib"dll/uart.dll";
 loadlib"dll/tts.dll";
 loadlib"dll/crypt.dll";
 loadlib"dll/TextFlow.dll";
+loadlib"dll/freetype.dll";
+loadlib"dll/mark.dll";
 
-def ollamaPath(tag) //通过标签查找模型参数路径
+def ollamaPath(tag) //閫氳繃鏍囩鏌ユ壘妯″瀷鍙傛暟璺緞
 {
 	dd=inf(getenv("OLLAMA_MODELS")+"\\manifests\\registry.ollama.ai\\library\\"+str.replace(tag,":","\\"));
 	if(!dd) return false;

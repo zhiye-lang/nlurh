@@ -4,3 +4,5 @@ loadlib"dll/uart.dll";
 loadlib"dll/tts.dll";
 loadlib"dll/crypt.dll";
 loadlib"dll/TextFlow.dll";
+loadlib"dll/freetype.dll";
+loadlib"dll/mark.dll";
