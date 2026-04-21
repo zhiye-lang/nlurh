@@ -287,15 +287,15 @@ Explanation: Call the platform max function to compare the data value with 5; ob
 
 
 
-#### 1.19: Run Script (runc)
+#### 1.19: Run Script (runsc)
 
-| Interface | runc   | Run specified script data       |
+| Interface | runsc  | Run specified script data       |
 | --------- | ------ | ------------------------------- |
 | Param     | script | Script string data(unicode)     |
 | Return    | result | Returns script execution result |
 
 ```c
-result runc{script} // runc{1+2*3} -> {int:7 }
+result runsc{script} // runc{1+2*3} -> {int:7 }
 ```
 
 
@@ -304,7 +304,7 @@ result runc{script} // runc{1+2*3} -> {int:7 }
 
 | Interface | runstr  | Run code from a string   |
 | --------- | ------- | ------------------------ |
-| Param     | strcode | Code string              |
+| Param     | strcode | Code string(utf-8)       |
 | Return    | result  | Returns execution result |
 
 ```c
