@@ -146,7 +146,6 @@ The `+` operator in Y-language supports operations between different data types.
 ```c
 '' + "国"       // Returns buf, showing the UTF-8 encoding of "国": buf[3]' E5 9B BD'
 "" + 'E5 9B BD' // Returns str, converting UTF-8 encoding back to character: str[1]"国"
-"" + 'XX XX XX' // General method: display any byte sequence encoding result as a string
 ```
 
 > **Core rule:** The result data type of `+` follows the left operand — `str + buf` yields str, `buf + str` yields buf.
@@ -169,25 +168,25 @@ if(condition) {
 ### 2. Loop Statements
 
 ```c
-// while loop
+// while Standard loop(Same as C/C++, Java, JavaScript, and C#)
 while(condition) {
-    // Loop body
+    // Loop body(supports: break, continue, return)
 }
 
 // while unconditional loop (Y-language original)
 while() {
-    a++;  // Infinite loop, needs break to exit
+    a++;  // Infinite loop (supports: break, continue, return)。
 }
 
 // Constant-count loop (Y-language original)
 while(100) {
-    // Loops 100 times
+    // Loops 100 times(supports: break, continue, return)
 }
 // Note: Unlike other languages, while(1) is NOT an infinite loop — it executes only once
 
-// for loop
+// for loop(Same as C/C++, Java, JavaScript, and C#)
 for (init; condition; increment) {
-    // Loop body
+    // Loop body(supports: break, continue, return)
 }
 ```
 
@@ -349,13 +348,13 @@ runstr(inf"sub_program.txt");
 
 ## Appendix B: Data Type Summary
 
-| Type          | Representation                                    | Example              |
-| ------------- | ------------------------------------------------- | -------------------- |
-| Integer (int) | Octal, hexadecimal, decimal. (Integer storage)    | 0743, 0xABFE, $i:123 |
-| Number (num)  | Numeric value with decimal point. (Float storage) | 123.0, 3.14, -0.5    |
-| String        | Double quotes                                     | `"hello"`            |
-| Data buffer   | Single quotes                                     | `'112233'`           |
-| Range         | Tilde                                             | `10~100`             |
+| Type          | Representation                                    | Example           |
+| ------------- | ------------------------------------------------- | ----------------- |
+| Integer (int) | Octal, hexadecimal, decimal. (Integer storage)    | 0743, 0xABFE, 123 |
+| Number (num)  | Numeric value with decimal point. (Float storage) | 123.0, 3.14, -0.5 |
+| String        | Double quotes                                     | `"hello"`         |
+| Data buffer   | Single quotes                                     | `'112233'`        |
+| Range         | Tilde                                             | `10~100`          |
 
 ## Appendix C: Quick Example
 
