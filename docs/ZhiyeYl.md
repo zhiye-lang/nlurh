@@ -19,14 +19,12 @@ Zhiye is a programming language platform developed for natural language understa
 
 ### 1. Numeric Types
 
-Supports integers, decimals, hexadecimal, and custom base numbers:
+Supports floating-point and integer values (decimal, hexadecimal, octal).
 
-| Type            | Format             | Example                     |
-| --------------- | ------------------ | --------------------------- |
-| Decimal integer | Direct number      | `123`, `-464`               |
-| Decimal float   | With decimal point | `78.64`, `-123.96`, `100.0` |
-| Hexadecimal     | `0x` prefix        | `0xFA12`                    |
-| Octal           | `0` prefix         | `0766`                      |
+| Type            | Format             | Examples                                      |
+| --------------- | ------------------ | --------------------------------------------- |
+| Float (`num`)   | With decimal point | `78.64`, `-123.96`, `100.0`                   |
+| Integer (`int`) | Plain number       | `123`, `-464`, `0xFA12` (hex), `0766` (octal) |
 
 ### 2. String Type
 
@@ -112,14 +110,14 @@ buf[0~4]         // Access all content from the 1st to the 5th element of buf
 
 ### 1. Numeric Operations
 
-| Category            | Operators                |
-| ------------------- | ------------------------ |
-| Arithmetic          | `+` `-` `*` `/` `%`      |
-| Compound assignment | `+=` `-=` `*=` `/=` `%=` |
-| Bitwise             | `&` `|` `^`              |
-| Logical             | `&&` `||`                |
-| Comparison          | `>` `>=` `<` `<=` `==`   |
-| Assignment          | `=`                      |
+| Category            | Operators                     |
+| ------------------- | ----------------------------- |
+| Arithmetic          | `+` `-` `*` `/` `%` `.*` `./` |
+| Compound assignment | `+=` `-=` `*=` `/=` `%=`      |
+| Bitwise             | `&` `|` `^`                   |
+| Logical             | `&&` `||`                     |
+| Comparison          | `>` `>=` `<` `<=` `==`        |
+| Assignment          | `=`                           |
 
 ### 2. String Operations
 
@@ -149,6 +147,27 @@ The `+` operator in Y-language supports operations between different data types.
 ```
 
 > **Core rule:** The result data type of `+` follows the left operand — `str + buf` yields str, `buf + str` yields buf.
+
+### 5. Composite Data (Arrays / Matrices)
+
+Y Language has built-in vector and matrix types for efficient numerical computation.
+
+- **Vector:** Space-separated values, e.g. `[1 2 3]`
+- **Matrix:** Rows separated by `;` or `,`, e.g. `[1 2; 3 4]` or `[1 2, 3 4]`
+
+Supports the full set of arithmetic operators (`+`, `-`, `*`, `/`, `.*`, `./`), where `*` is matrix multiplication and `.*` is element-wise multiplication.
+
+```bat
+[11 22 33]*5              ->  [int:55 int:110 int:165 ]
+[11 22 33]+[44 55 66]     ->  [int:55 int:77 int:99 ]
+[1.1 2.2 3.3]*[4.4 5.5 6.6] -> [num:4.84 num:12.1 num:21.78 ]
+[1 2]/[3 4]               ->  [int:0 int:0 ]
+[1.0 2.0]/[3 4]           ->  [num:0.333333 num:0.5 ]
+// Matrix multiplication
+a=[1 2; 3 4]; b=[5 6; 7 8];
+c=a*b;
+out c  ->  [c]sub(int:19 int:22  ,  int:43 int:50 )
+```
 
 
 ## IV. Control Flow Statements
