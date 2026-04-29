@@ -105,7 +105,6 @@ buf[0~4]         // Access all content from the 1st to the 5th element of buf
 
 > **Note:** `[..]` is a parameter modifier that follows immediately after the parameter name. It is not a standalone operator. It acts on the parameter's own content to extract data from a specified range.
 
-
 ## III. Expressions and Operators
 
 ### 1. Numeric Operations
@@ -148,6 +147,19 @@ The `+` operator in Y-language supports operations between different data types.
 
 > **Core rule:** The result data type of `+` follows the left operand — `str + buf` yields str, `buf + str` yields buf.
 
+### 4. Numeric Type Promotion Rules
+
+For `+`, `-`, `*`, `/` on numeric types, the result type follows these rules (only all-integer operations produce an integer result):
+
+| Left | Right | Result | Example      | Value      |
+| ---- | ----- | ------ | ------------ | ---------- |
+| int  | int   | int    | `10 / 3`     | `3`        |
+| int  | num   | num    | `10 / 3.0`   | `3.333333` |
+| num  | int   | num    | `10.0 / 3`   | `3.333333` |
+| num  | num   | num    | `10.0 / 3.0` | `3.333333` |
+
+> **Note:** Only `int / int` truncates the decimal; all other combinations preserve it.
+
 ### 5. Composite Data (Arrays / Matrices)
 
 Y Language has built-in vector and matrix types for efficient numerical computation.
@@ -169,6 +181,27 @@ c=a*b;
 out c  ->  [c]sub(int:19 int:22  ,  int:43 int:50 )
 ```
 
+### 6. Pipe Operator `|>`
+
+`|>` passes the value on the left as an argument to the function on the right, enabling readable left-to-right data flow chains:
+
+```y
+// Nested style: read from inside out
+localtime(time("ntp2.aliyun.com"))
+
+// Pipe style: read left to right — clear data flow
+"ntp2.aliyun.com" |> time |> localtime
+// <- str[19]"2026-04-28 10:22:38"
+```
+
+Multi-step processing example:
+
+```y
+// Serial data pipeline: receive → parse → validate → store
+uart.recv(fd) |> parse_frame |> validate |> store_db
+```
+
+> **Note:** When the right-hand function takes exactly one argument, parentheses may be omitted (consistent with the function call shorthand rule). For functions with additional parameters, supply them explicitly: `val |> process(extra_param)`.
 
 ## IV. Control Flow Statements
 
