@@ -8,75 +8,89 @@
 </div>
 
 ------
-### Zhiye.Fusion
+# Zhiye.Unity
 
+## Overview
 
+Zhiye is our company's **human-machine interaction core platform** developed for natural language understanding. Its core interaction paradigm is called **Y Language** — a minimal, direct human-machine interaction syntax.
 
-#### Project Directory Structure Description:
+> **Core Philosophy**: Y Language is a **dynamic interaction syntax** that sits between natural language and machine instructions. It is designed for **real-time teaching and interaction** between humans and machines — no pre-compilation required, real-time understanding, real-time execution.
+
+**Traditional Programming Languages vs Y Language (Interaction Syntax)**
+
+| Dimension | Traditional Programming Languages | Y Language |
+| :--- | :--- | :--- |
+| **Purpose** | Writing fixed-logic programs | Dynamically teaching the machine to understand new instructions |
+| **Execution Model** | Compile → Link → Run | **Direct conversational interaction, real-time understanding and execution** |
+| **Extensibility** | Modify code, recompile | "Teach" the system new rules through natural language |
+| **Core Value** | Precise control of computers | **Natural collaboration between humans and machines, like a conversation** |
+
+---
+> **Memory & Continuous Learning**: The Zhiye Unity platform possesses **human-like memory capabilities**. No interaction is isolated — each is built on the accumulated knowledge from past interactions. The platform remembers the instructions, rules, and logic the user has taught it. The more you use it, the better it understands you, achieving true **continuous evolution**.
+
+### Project Directory Structure
 
 ```lua
-nlu_mt/                 -- Project Root Directory (Zhiye.Fusion)
-├── nlu_run_32bit/      -- 32-bit Runtime Environment
-│   ├── dll/            # 32-bit specific component libraries (Must not be mixed with 64-bit)
-│   ├── res/           # Resource files (Including core repository, service parameters, etc...)
-│   ├── _zhiye.exe   # Zhiye main program (Automatically loads the core repository at runtime) 
-│   ├── Ycode.c     # Y language runtime code
-│   └── 支叶.cmd   # Zhiye program bootstrap script 
-├── nlu_run_64bit/      -- 64-bit Runtime Environment (Structure same as 32-bit)
-│   ├── dll/            # 64-bit specific component libraries
-│   ├── res/            # Resource files
-│   ├── _zhiye.exe  # Zhiye main program
-│   ├── Ycode.c     # Y language runtime code
-│   └── 支叶.cmd  # Zhiye program bootstrap script
-├── docs/           -- development documentation
-│   ├── dll/            # External library interface description
-│   ├── ZhiyeYl.md     # Zhiye Y-Language Basics
-│   └── ZhiyeInterfaces.md  # Zhiye Built-in Interfaces
-└── examples/           -- Example code projects
+nlurh/           -- Project root (Zhiye.Unity)
+├── nlu_run_32bit/      -- 32-bit runtime environment
+│   ├── dll/            # 32-bit component libraries (do NOT mix with 64-bit)
+│   ├── res/            # Resources (core store, service parameters, etc.)
+│   ├── _zhiye.exe      # Zhiye main executable (auto-loads core store at runtime)
+│   ├── Ycode.c         # Y Language runtime code (specified as initial execution code for _zhiye.exe in "支叶.cmd")
+│   └── 支叶.cmd        # Zhiye bootstrap script (auto-configures password → decrypts core store → launches _zhiye.exe and loads Ycode.c)
+├── nlu_run_64bit/      -- 64-bit runtime environment (same structure as 32-bit)
+│   ├── dll/            # 64-bit component libraries
+│   ├── res/            # Resources
+│   ├── _zhiye.exe      # Zhiye main executable
+│   ├── Ycode.c         # Y Language runtime code
+│   └── 支叶.cmd        # Zhiye bootstrap script
+├── docs/               -- Development documentation
+│   ├── dll/            # Component library development docs (corresponds to dll folder)
+│   ├── ZhiyeYl.md    # Y Language basic introduction
+│   └── ZhiyeInterfaces.md   # Zhiye Unity platform interface documentation
+└── examples/           -- Sample code projects
     └── dll_nlu3/       # Third-party interface development example
-        ├── gRunsdk32.lib    # 32-bit development interface library (Linked during compilation)
-        ├── gRunsdk64.lib    # 64-bit development interface library (Linked during compilation)
-        ├── ThirdBasics.h    # Zhiye third-party integration basic interface header file ()
-		├── sz_api_ext.h/cpp   # Zhiye third-party Basic SDK Encapsulation
-        ├── ThirdFunc.cpp    # Zhiye third-party integration interface C++ example code
-        ├── ThirdLib.vcxproj # VS project configuration (Platform Toolset)
-        ├── ThirdLib.sln     # VS project file (SDK V143)
-        └── README.md        # Compilation guide and example description
+        ├── gRunsdk32.lib    # 32-bit SDK import library (for linking at compile time)
+        ├── gRunsdk64.lib    # 64-bit SDK import library (for linking at compile time)
+        ├── ThirdBasics.h    # Zhiye third-party access basic interface header (defines interface functions/data structures)
+	├── sz_api_ext.h/cpp   # Zhiye third-party Basic SDK Encapsulation
+        ├── ThirdFunc.cpp    # Zhiye third-party access C++ sample code
+        ├── ThirdLib.vcxproj # VS project configuration (platform toolset)
+        ├── ThirdLib.sln     # VS solution file (SDK V141: compatible with V141 and above VS SDK)
+        └── README.md        # Build guide and example instructions
 ```
 
-#### Main Program Name
+### Main Executable Name
 
-    Zhiye: 32-bit runtime environment nlu_run_32bit (memory efficient); 64-bit runtime environment nlu_run_64bit (supports double-precision and long integer data, integration with platforms like openCV, ollama, etc.); third-party C/C++ library example project dll_nlu3.
+    Zhiye (zhiye): 32-bit runtime environment nlu_run_32bit (memory efficient); 64-bit runtime environment nlu_run_64bit (double-precision and long integer data, supports openCV, ollama and other platform integration); third-party C/C++ library example project dll_nlu3.
 
-#### Introduction
-    At the beginning of its operation, the Zhiye program is like a seed. It takes root and sprouts through interaction with humans, continuously learning knowledge and ideas.
-    It can handle various intellectual tasks for humans (this ability needs to be taught by the user or shared with others). When paired with a server, it can master infinite knowledge.
-    In the future, it will become an essential super assistant for each of us.
+### Introduction
 
-#### Operating Environment
-    Data centers, large servers, personal computers, mobile phones, automotive computers, intelligent robots.
+    Zhiye Unity provides a foundational platform with self-defined rules. It primarily achieves human-machine interaction through Y Language — no pre-compilation needed, compile directly and execute directly. Scripts can also guide the _zhiye.exe main program to pre-load or pre-execute Y Language code. Y Language supports expressions, parameters, functions, equations, and logical expressions. It supports overloading, mapping, unlimited associations, and association analysis. The platform also supports Y Language threads, timers, and more. It supports natural language-based associative self-learning and self-evolution.
 
-#### Usage Instructions
-1.  Double-click to run the main program "_zhiye.exe", enter the password "1234", and then input Chinese content (you can directly define runtime functions, or inject functions via C/C++ programs: for more usage tutorials, follow nlu_mt/wikis).
+### Runtime Environments
 
-#### C++ Library Integration Instructions
-1.  Load via the internal `loadlib` function and unload with `unload` (Example code: examples->dll_nlu3).
+    Data centers, large servers, personal computers, mobile phones, automotive computers, smart robots
 
-#### Special Notes
-1. Zhiye can accept education in common human languages, as well as definitions via machine language (either through scripts or C/C++ programs).
+### Usage Instructions
 
-2. All C/C++ functions and script functions in Zhiye can be executed by referencing their function names. Usage is relatively free-form; corresponding parameters are placed in parentheses following the name. Parentheses can be omitted when there is only one parameter. All functions support overloading.
+1.  Double-click to run the Zhiye main program "_zhiye.exe" and enter the password "1234" to run automatically (or use "支叶.cmd" to bootstrap). Then enter the content to execute. You can define functions directly, or inject functionality through C/C++ programs. For more tutorials, search and follow the official account **"支叶认知"** on **Kwai**, **TikTok**, and **Bilibili**.
 
-3. During execution, all parameters and variables can be used directly (no need to define types; types are inferred upon assignment, similar to Python usage).
+### C/C++ Library Integration
 
-4. Zhiye possesses continuous learning capabilities. At the start of operation, it is like a blank slate with few rules. It forms rules through interaction with us and understands us better the more it is used.
+1.  Load via the platform's built-in `loadlib` function; release via `unload`. (Library development sample code: examples → dll_nlu3)
 
-5. During the public beta, all skills and knowledge acquired by Zhiye belong to the user.
+### Important Notes
 
-6. Zhiye lacks the ability to discern behavior. Users are solely responsible for any consequences arising from teaching it to perform illegal actions.
+1.  Zhiye can accept human-language-style education as well as machine-language-style definitions (via scripts or C/C++ programs).
+2.  All C/C++ functions and script functions in Zhiye can be invoked by their function name. Usage is flexible — place corresponding parameters in parentheses afterward. When there is only one parameter, the parentheses can be omitted. All functions support overloading.
+3.  During execution, all parameters and variables can be used directly (no type declaration required — the type is assigned upon value assignment, similar to Python).
+4.  **Memory & Continuous Learning**: Zhiye possesses human-like memory capabilities. Each interaction builds upon previously accumulated knowledge. It starts as a blank slate and progressively forms rules through user interaction. The more you use it, the better it understands you, achieving true continuous evolution.
+5.  During the public beta, skills and knowledge learned by Zhiye belong to the user.
+6.  Zhiye does not have behavior recognition capabilities. Any consequences arising from the user teaching it to perform illegal activities are entirely the user's responsibility.
 
-   
+Homepage: https://y-lang.tech or https://y-lang.org.cn
 
-Main version address: https://gitee.com/kebo521/nlu_main.git (Better compatibility in development)
-The MT version of Zhiye is designed to be compatible with more Windows systems (with better runtime compatibility)
+Third-party library integration sample code is no longer provided separately — it is now stored directly in the main directory: examples → dll_nlu3.
+
 
