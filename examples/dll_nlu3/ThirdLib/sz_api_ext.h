@@ -24,7 +24,7 @@ extern void sz_free_dbs(DataBufStr *pBfS);
 //--The caller should NOT free the `dbs` memory after this call-----------------
 extern void sz_take_unit_dbs(ExpUnit* &sz_unit, int tval, DataBufStr *dbs);
 //----------General Assignment------------
-#define SZ_GET_INT_VALUE(u) (u)->tval==NUM_NUM ?(u)->iNum:(u)->iVal
+#define SZ_GET_INT_VALUE(u) ((u)->tval==NUM_NUM ?(u)->iNum:(u)->iVal)
 
 extern int sz_load_func_tab(ParUnit* &pStackPar,const SzFuncTable *pTbl);
 
