@@ -94,3 +94,30 @@ Homepage: https://y-lang.tech or https://y-lang.org.cn
 Third-party library integration sample code is no longer provided separately — it is now stored directly in the main directory: examples → dll_nlu3.
 
 
+### Claude Code AI Assistant (Skill Tool)
+
+This project includes a built-in **DLL External Extension Skill** for Claude Code — download and use AI-assisted development right away.
+
+**Setup**:
+1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) (Anthropic's official AI coding assistant)
+2. Open a terminal in this project directory
+3. Run `claude` to start the AI assistant
+
+**How to Use**:
+
+| Method | Action | Example |
+|--------|--------|---------|
+| Slash command | Type `/nlu2-dll` | Load the DLL extension knowledge base, AI guides you step by step |
+| Natural question | Ask directly | "What interfaces does ui.dll have?", "How do I build a serial port DLL?" |
+| Build assist | Let AI compile for you | "Build dll_nlu3 for 64-bit" |
+
+**Skill Capabilities**:
+- Y Language syntax reference and examples
+- All built-in DLL interface lookup (ui / crypt / uart / tts / mark / TextFlow)
+- C/C++ DLL development template generation
+- Build → Deploy → Test one-click workflow
+- Platform API guidance (file I/O, networking, threading, timers, etc.)
+
+**How It Works**: Claude Code automatically reads `CLAUDE.md` on startup for project context, and auto-discovers skill files in the `.claude/skills/` directory. No configuration needed — it just works out of the box.
+
+

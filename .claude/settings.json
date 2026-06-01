@@ -1,0 +1,55 @@
+{
+  "description": "Zhiye Unity Platform (nlurh) — Claude Code Project Configuration",
+  "permissions": {
+    "allow": [
+      "Bash(MSBuild:*)",
+      "Bash(cp:*dll*)",
+      "Bash(copy:*dll*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(cd:nlu_run_64bit*)",
+      "Bash(cd:nlu_run_32bit*)",
+      "Bash(timeout:*_zhiye.exe*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(wc:*)",
+      "Bash(file:*)",
+      "Read(*.md)",
+      "Read(*.h)",
+      "Read(*.cpp)",
+      "Read(*.c)",
+      "Read(*.txt)",
+      "Read(*.json)",
+      "Read(*.xml)",
+      "Read(*.vcxproj)",
+      "Read(*.sln)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebSearch(*)",
+      "WebFetch(*)",
+      "Skill(nlu2-dll)"
+    ],
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(del:*)",
+      "Bash(chmod:*)",
+      "Bash(sudo:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "description": "Confirm target platform before building DLL (x64/Win32)",
+        "prompt": "Confirm build platform: x64 for 64-bit, Win32 for 32-bit. Proceed?"
+      }
+    ]
+  },
+  "skills": {
+    "nlu2-dll": {
+      "description": "Zhiye Platform DLL External Extension Knowledge Base — Y Language, platform APIs, all DLL interfaces, build/test",
+      "path": ".claude/skills/nlu2-dll.md"
+    }
+  }
+}
