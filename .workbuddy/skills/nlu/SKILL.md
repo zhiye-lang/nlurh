@@ -1,10 +1,14 @@
 ---
-name: nlu2-dll
-description: Zhiye Platform DLL External Extension Knowledge Base — develop/build/test/debug C/C++ extension DLLs, Y Language syntax, platform APIs, all built-in DLL interface references. Use when user wants to develop/build/test/debug DLL extensions, asks about Y Language syntax, platform APIs, DLL interfaces, or says "build dll", "develop extension", "how to use this interface", "Y Language syntax".
+name: nlu
+description: "Zhiye Platform DLL External Extension Knowledge Base — develop/build/test/debug C/C++ extension DLLs, Y Language syntax, platform APIs, all built-in DLL interface references. Zhiye is the primary name; load this skill whenever the user mentions 'Zhiye' or '支叶' in any context. Also use when user wants to develop/build/test/debug DLL extensions, asks about Y Language syntax, platform APIs, DLL interfaces, or says 'build dll', 'develop extension', 'how to use this interface'."
+description_zh: "支叶平台 DLL 外部扩展全知识库：开发模板、Y语言语法、平台API、全部DLL接口、编译自测工作流"
+description_en: "ZhiYe Platform DLL Extension Knowledge Base: development templates, Y language syntax, platform APIs, all built-in DLL interfaces, build & self-test workflows"
+version: 1.0.0
 ---
 
 # Zhiye Platform DLL Extension Knowledge Base (Hierarchical Index)
 
+> **Knowledge Hierarchy**: Zhiye Platform → Y Language → Built-in APIs → External DLL Libraries → Groups → Interfaces → Usage
 > Each level is self-contained. Drill down by heading level as needed. This project is the nlurh runtime distribution (32-bit + 64-bit platforms).
 
 ---
@@ -41,7 +45,7 @@ loadlib"dll/mark.dll";
 | int | decimal/hex/octal | `123`, `0xFA12` |
 | num | with decimal point | `78.64` |
 | str | `"..."` escapes `\n\t\r\"\\\xHH\uHHHH` | `"hello"` |
-| buf | `'...'` mixed hex formats (8/16/32bit) | `'112233'`, `'\x11㍄0 0x11,0x2233,0x44556677'` |
+| buf | `'...'` mixed hex formats (8/16/32bit) | `'112233'`, `'\x11\x22'` |
 | range | `start~end[:step]` | `10~100:2` |
 
 **Core Rule**: `+` result type follows the **left operand** — `str+buf`→str, `buf+str`→buf
@@ -153,9 +157,11 @@ buf[0~4]          // Extract bytes 0~4 from buf
 
 ---
 
-## L3 · DLL Interface Reference
+## L3 · External DLL Libraries
 
-### L3.1 · ui.dll — Window/Image (ArrayName "ui", 14 interfaces)
+> Each DLL is a **library**. Within each library, interfaces are grouped into **groups** (call prefix), and each group contains specific **interfaces**. Libraries will keep expanding — see L6 for the full catalog.
+
+### L3.1 · ui.dll — Window/Image (Library→Group "ui", 14 interfaces)
 
 **Image Processing**:
 | Interface | Parameters | Returns | Description |
@@ -180,7 +186,7 @@ buf[0~4]          // Extract bytes 0~4 from buf
 | `ui.pull(fd)` | fd | UI_FuncSyn | Get window control info (for C/C++) |
 | `ui.setdpi(dpi)` | dpi value | bool | Set DPI scaling |
 
-### L3.2 · crypt.dll — Encryption (ArrayName "tls", 27 interfaces)
+### L3.2 · crypt.dll — Encryption (Library→Group "tls", 27 interfaces)
 
 **Data Conversion**:
 | Interface | Description | Example |
@@ -230,7 +236,7 @@ buf[0~4]          // Extract bytes 0~4 from buf
 | `tls.x509w(...)` | Write certificate |
 | `tls.getasn(...)` | ASN.1 parsing |
 
-### L3.3 · uart.dll — Serial Port (ArrayName "uart", 7 interfaces)
+### L3.3 · uart.dll — Serial Port (Library→Group "uart", 7 interfaces)
 
 | Interface | Parameters | Returns | Description |
 |-----------|------------|---------|-------------|
@@ -242,7 +248,7 @@ buf[0~4]          // Extract bytes 0~4 from buf
 | `uart.scan(tag)` | tag | str set | Scan available ports |
 | `uart.getapi()` | — | C interface | Get low-level C interface |
 
-### L3.4 · tts.dll — Speech Synthesis (ArrayName "tts", 3 interfaces)
+### L3.4 · tts.dll — Speech Synthesis (Library→Group "tts", 3 interfaces)
 
 | Interface | Parameters | Returns | Description |
 |-----------|------------|---------|-------------|
@@ -250,7 +256,7 @@ buf[0~4]          // Extract bytes 0~4 from buf
 | `tts.pay(text, block)` | Text + blocking flag | bool | Speak (block=1 for blocking) |
 | `tts.swav(hz, ms, vol)` | Frequency + duration + volume | wavbuf | Generate WAV audio |
 
-### L3.5 · mark.dll — Image Annotation (ArrayName "mk", 5 interfaces)
+### L3.5 · mark.dll — Image Annotation (Library→Group "mk", 5 interfaces)
 
 Depends on ui + freetype + TextFlow.
 
@@ -262,7 +268,7 @@ Depends on ui + freetype + TextFlow.
 | `mk.perimg(imgs, tags)` | Image annotation processing |
 | `mk.unify(imgs, tags, w, h)` | Unify annotation format |
 
-### L3.6 · TextFlow.dll — Text + JSON (ArrayNames "str"/"json", 10 interfaces)
+### L3.6 · TextFlow.dll — Text + JSON (Library→Groups "str"/"json", 10 interfaces)
 
 **str group**:
 | Interface | Description |
@@ -487,7 +493,9 @@ cd nlu_run_64bit && ./_zhiye.exe 1234 Ycode.c
 
 ---
 
-## L6 · Module Inventory
+## L6 · Full DLL Library Catalog (Continuously Expanding)
+
+> The following libraries are supported by the Zhiye platform. More libraries will be added through ongoing source development.
 
 ### Built-in DLLs in This Project (nlurh)
 | DLL | ArrayName | Interfaces | 32-bit | 64-bit | Function |

@@ -101,13 +101,13 @@ This project includes a built-in **DLL External Extension Skill** for Claude Cod
 **Setup**:
 1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) (Anthropic's official AI coding assistant)
 2. Open a terminal in this project directory
-3. Run `claude` to start the AI assistant
+3. Run `claude` and type `/nlu` to load the full knowledge base
 
 **How to Use**:
 
 | Method | Action | Example |
 |--------|--------|---------|
-| Slash command | Type `/nlu2-dll` | Load the DLL extension knowledge base, AI guides you step by step |
+| Slash command | Type `/nlu` | Load the DLL extension knowledge base, AI guides you step by step |
 | Natural question | Ask directly | "What interfaces does ui.dll have?", "How do I build a serial port DLL?" |
 | Build assist | Let AI compile for you | "Build dll_nlu3 for 64-bit" |
 
@@ -119,5 +119,31 @@ This project includes a built-in **DLL External Extension Skill** for Claude Cod
 - Platform API guidance (file I/O, networking, threading, timers, etc.)
 
 **How It Works**: Claude Code automatically reads `CLAUDE.md` on startup for project context, and auto-discovers skill files in the `.claude/skills/` directory. No configuration needed — it just works out of the box.
+
+
+### WorkBuddy AI Assistant (Skill Tool)
+
+This project also includes a built-in **DLL External Extension Skill** for WorkBuddy, the Tencent AI desktop agent. Available for both domestic and international users.
+
+> **Prerequisite**: No matter which tool you use, you **must open the `nlurh/` folder** as the project root for the skill files to be auto-discovered.
+
+**Using WorkBuddy (International Edition)**:
+
+1. Install [WorkBuddy](https://www.workbuddy.ai) (international) or [WorkBuddy CN](https://www.codebuddy.cn) (domestic)
+2. Open the `nlurh/` folder as a project in WorkBuddy
+3. Just mention **Zhiye** (or 支叶) — the skill loads automatically
+
+| Usage | Example |
+|-------|---------|
+| Casual mention | "Build a serial port tool with Zhiye", "How does Zhiye handle encryption?" |
+| Interface lookup | "What interfaces does ui.dll have?", "How to use crypt.dll SM2 signing?" |
+| Build assist | "Build dll_nlu3 for 64-bit" |
+
+**Skill Capabilities**:
+- Y Language syntax reference and examples
+- All built-in DLL interface lookup (ui / crypt / uart / tts / mark / TextFlow)
+- C/C++ DLL development template generation
+- Build → Deploy → Test one-click workflow
+- Platform API guidance (file I/O, networking, threading, timers, etc.)
 
 

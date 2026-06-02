@@ -186,9 +186,9 @@ def add(a, b) { return a + b; }
 
 This project includes a `.claude/skills/` directory with a dedicated skill for Claude Code:
 
-- **nlu2-dll** — DLL External Extension Knowledge Base: development templates, Y Language syntax, platform APIs, all DLL interfaces, build & test workflows
+- **nlu** — DLL External Extension Knowledge Base: development templates, Y Language syntax, platform APIs, all DLL interfaces, build & test workflows
 
-Usage: type `/nlu2-dll` in Claude Code, or ask Zhiye-related questions directly.
+Usage: type `/nlu` in Claude Code, or ask Zhiye-related questions directly.
 
 ## Coding Standards
 

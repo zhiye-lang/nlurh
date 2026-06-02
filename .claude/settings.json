@@ -28,7 +28,7 @@
       "Grep(*)",
       "WebSearch(*)",
       "WebFetch(*)",
-      "Skill(nlu2-dll)"
+      "Skill(nlu)"
     ],
     "deny": [
       "Bash(rm:*)",
@@ -47,9 +47,9 @@
     ]
   },
   "skills": {
-    "nlu2-dll": {
+    "nlu": {
       "description": "Zhiye Platform DLL External Extension Knowledge Base — Y Language, platform APIs, all DLL interfaces, build/test",
-      "path": ".claude/skills/nlu2-dll.md"
+      "path": ".claude/skills/nlu.md"
     }
   }
 }
