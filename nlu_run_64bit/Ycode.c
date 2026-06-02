@@ -6,8 +6,9 @@ loadlib"dll/crypt.dll";
 loadlib"dll/TextFlow.dll";
 loadlib"dll/freetype.dll";
 loadlib"dll/mark.dll";
+loadlib"dll/cam.dll";
 
-def ollamaPath(tag) //通过标签查找模型参数路径
+def ollamaPath(tag) //Find the path of model parameters through tags
 {
 	dd=inf(getenv("OLLAMA_MODELS")+"\\manifests\\registry.ollama.ai\\library\\"+str.replace(tag,":","\\"));
 	if(!dd) return false;
