@@ -30,6 +30,7 @@ loadlib"dll/ui.dll";          // Pre-load common libraries
 loadlib"dll/crypt.dll";
 loadlib"dll/uart.dll";
 loadlib"dll/tts.dll";
+loadlib"dll/cam.dll";
 loadlib"dll/TextFlow.dll";
 loadlib"dll/freetype.dll";
 loadlib"dll/mark.dll";
@@ -287,6 +288,51 @@ Depends on ui + freetype + TextFlow.
 | `json.get(fd, key)` | Get field from fd |
 | `json.free(fd)` | Free JSON handle |
 
+### L3.7 · cam.dll — Camera Capture (Library→Group "cam", 10 interfaces)
+
+Based on Windows Media Foundation. Supports multi-camera enumeration, RGBA frame capture, auto-preview window, and driver-level portrait processing.
+
+**Basic Capture**:
+| Interface | Parameters | Returns | Description |
+|-----------|------------|---------|-------------|
+| `cam.list()` | — | str | Enumerate available cameras (`N#name1\nname2...`) |
+| `cam.open(idx, w/null, h/null)` | Index + width + height | fd | Open camera (default 640x480) |
+| `cam.start(fd)` | fd | bool | Start frame capture |
+| `cam.get(fd)` | fd | buf | Get current frame (DATA_MAP format, RGBA, direct to ui.push/smap/dmap) |
+| `cam.stop(fd)` | fd | bool | Stop capture (keeps open, re-startable) |
+| `cam.close(fd)` | fd | bool | Close and release resources |
+| `cam.status(fd)` | fd | int | Query status (0=closed/1=opened/2=capturing/3=paused) |
+| `cam.info(fd)` | fd | str | Get camera details |
+
+**Auto Display** (one-liner replacing manual frame loop):
+| Interface | Parameters | Returns | Description |
+|-----------|------------|---------|-------------|
+| `cam.show(uibase, fd, fps/null)` | UI base + handle + fps | dfd | Auto open window with live feed (default 30fps) |
+| `cam.show_close(dfd)` | Display handle | bool | Close display window (camera stays open) |
+
+**Driver-Level Extension Control** (Windows 10+ IMFExtendedCameraController):
+| Interface | Parameters | Returns | Description |
+|-----------|------------|---------|-------------|
+| `cam.caps(fd)` | fd | str | Query driver-supported extension features |
+| `cam.ctrl(fd, prop, value/null)` | fd + property + value/null | int/bool | Read/write extension control (value=write, null=read) |
+
+Supported properties: `background_blur`(blur/replace), `face_detection`, `eye_correction`, `video_hdr`, `video_stabilization`, `roi_isp`(face ROI exposure).
+
+**State Machine**: `CLOSED(0)` → `cam.open()` → `OPENED(1)` → `cam.start()` → `RUNNING(2)` ↔ `cam.stop()` ↔ `PAUSED(3)` → `cam.close()` → `CLOSED(0)`
+
+```c
+// Basic capture example
+fd = cam.open(0, 640, 480);
+cam.start(fd); sleep(0.5);
+frame = cam.get(fd);
+ui.dmap(frame);  // Popup display, DATA_MAP feeds UI directly
+
+// Auto display example
+fb = ui.get(); fd = cam.open(0);
+cam.ctrl(fd, "background_blur", 1);  // Configure driver blur first
+cam.show(fb, fd);                     // Then display
+```
+
 ---
 
 ## L4 · C/C++ DLL Development
@@ -504,6 +550,7 @@ cd nlu_run_64bit && ./_zhiye.exe 1234 Ycode.c
 | crypt.dll | tls | 27 | ✅ | ✅ | Encryption/hash/sign/certs (md5/sha1/sha256/sm3/des/aes/sm4/sm2/rsa) |
 | uart.dll | uart | 7 | ✅ | ✅ | Serial port communication (COM ports) |
 | tts.dll | tts | 3 | ✅ | ✅ | Windows TTS speech synthesis + WAV generation |
+| cam.dll | cam | 10 | ✅ | ✅ | Camera capture (Media Foundation) + driver-level portrait processing |
 | mark.dll | mk | 5 | ✅ | ✅ | Image annotation (requires ui+freetype+TextFlow) |
 | TextFlow.dll | str/json | 10 | ✅ | ✅ | Text processing + JSON parsing |
 | freetype.dll | ft | — | ✅ | ✅ | FreeType font rendering engine |
