@@ -91,7 +91,11 @@ nlurh/           -- Project root (Zhiye.Unity)
 
 Homepage: https://y-lang.tech or https://y-lang.org.cn
 
-Third-party library integration sample code is no longer provided separately — it is now stored directly in the main directory: examples → dll_nlu3.
+chat window source code: https://gitee.com/sz-ai/zhiye_chat_ui.git
+
+chat window exe (compiled from the above source code): https://pan.baidu.com/s/1AuhBzTNssm64AVLJlhiqtQ?pwd=1ef2
+
+
 
 
 ### Claude Code AI Assistant (Skill Tool)
@@ -145,5 +149,4 @@ This project also includes a built-in **DLL External Extension Skill** for WorkB
 - C/C++ DLL development template generation
 - Build → Deploy → Test one-click workflow
 - Platform API guidance (file I/O, networking, threading, timers, etc.)
-
 
