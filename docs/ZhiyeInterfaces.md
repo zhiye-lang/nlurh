@@ -93,7 +93,29 @@ buf range(rng, bits)
 
 
 
-#### 1.6: Formatted Output (printf)
+#### 1.6: Indexed Value Extraction (takat)
+
+| Interface | takat       | Extract pure values from modified content                    |
+| --------- | ----------- | ------------------------------------------------------------ |
+| Param     | sub/data+[] | Modifier parameter, formats: `sub[1~3]`, `data[4~9]`, `sub[5]` |
+| Return    | sub/data    | Returns corresponding new data (unmodified); external libraries cannot parse modifier parameters and need takat for purification. |
+
+```c#
+-> sub=[11 22 33 44 55 66 77 88 99]
+<- sub
+-> takat(sub[1~3])
+<- [int:22 int:33 int:44 ]
+-> takat(sub[1])
+<- int:22
+-> data="1234567890"
+<- data
+-> takat(data[1~3])
+<- str[3]"234"
+```
+
+
+
+#### 1.7: Formatted Output (printf)
 
 | Interface | printf   | Formatted output to file or console |
 | --------- | -------- | ----------------------------------- |
@@ -107,7 +129,7 @@ str printf(format, args...) // printf("Value: %d", 123) -> "Value: 123"
 
 
 
-#### 1.7: Get Milliseconds (getms)
+#### 1.8: Get Milliseconds (getms)
 
 | Interface | getms | Get system millisecond count |
 | --------- | ----- | ---------------------------- |
@@ -120,7 +142,7 @@ int getms() // ms = getms()
 
 
 
-#### 1.8: Get Time (time)
+#### 1.9: Get Time (time)
 
 | Interface | time     | Get current time (Unix timestamp)                            |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -133,7 +155,7 @@ int time(ntp_server) // timestamp = time(); Get Unix time from local clock; time
 
 
 
-#### 1.9: Time Conversion (mktime)
+#### 1.10: Time Conversion (mktime)
 
 | Interface | mktime   | Convert time string to timestamp                    |
 | --------- | -------- | --------------------------------------------------- |
@@ -146,7 +168,7 @@ int mktime(str_time) // timestamp = mktime("2025-10-14 01:02:51")
 
 
 
-#### 1.10: Local Time (localtime)
+#### 1.11: Local Time (localtime)
 
 | Interface | localtime | Convert timestamp to local time (inverse of mktime) |
 | --------- | --------- | --------------------------------------------------- |
@@ -159,7 +181,7 @@ str_time localtime(timestamp) // str_time = localtime(ts)
 
 
 
-#### 1.11: Sleep (sleep)
+#### 1.12: Sleep (sleep)
 
 | Interface | sleep   | Put current thread to sleep for specified duration |
 | --------- | ------- | -------------------------------------------------- |
@@ -172,7 +194,7 @@ void sleep(s) // sleep(0.01) // Sleep for 10ms
 
 
 
-#### 1.12: Get Environment Variable (getenv)
+#### 1.13: Get Environment Variable (getenv)
 
 | Interface | getenv   | Get environment variable value                               |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -185,7 +207,7 @@ str getenv("PATH") // path = getenv("PATH")
 
 
 
-#### 1.13: Get Current Directory (getdir)
+#### 1.14: Get Current Directory (getdir)
 
 | Interface | getdir | Get current working directory  |
 | --------- | ------ | ------------------------------ |
@@ -198,24 +220,47 @@ str getdir() // current_dir = getdir()
 
 
 
-#### 1.14: Output to Console (out)
+#### 1.15: Clear Element (clean)
 
-| Interface | out                | Output data to console                                       |
-| --------- | ------------------ | ------------------------------------------------------------ |
-| Param     | variable name/null | Variable name to output; when empty, outputs all current variables |
-| Return    | bool               | Returns true on success                                      |
+| Interface | clean | Clear an element          |
+| --------- | ----- | ------------------------- |
+| Param     | name  | Element name              |
+| Return    | void  | Nothing                   |
 
 ```c
-bool out(name,...) // ab =  20; out(ab) /out ab -> [ab]num:20
+void clean(name) 
+/*
+-> da="hellow"
+<- da
+-> out da
+<- str[18]"[da]str[6]"hellow""
+-> clean da
+<-
+-> out da
+<- str[4]"[da]"
+*/
+```
+
+
+
+#### 1.16: Debug Output (trace)
+
+| Interface | trace              | Output debug info to console (always to console in any run mode) |
+| --------- | ------------------ | -------------------------------------------------------- |
+| Param     | variable name/null | Variable name to output; when empty, outputs all current variables |
+| Return    | none               | Outputs only to debug console, no return value; usable inside threads |
+
+```c
+trace(name,...) // ab = 20; trace(ab) / trace ab -> [ab]num:20  // Output to debug console
 /*
 // When no input parameter, prints all meta names (functions and parameters exist as meta elements).
--> out() // out with no parameters
+-> trace() // trace with no parameters
 <json><str><tls><tts><uart><ui><setfont><stoptimer><starttimer><killth><createth><disconnect><recv><send><connect><urlparse><stoptimer><starttimer><killth><createth><unload><loadlib><runstr><input><jsonvm><runsc><setfunc><inf><outf><out><getdir><getenv><sleep><localtime><mktime><time><getms><printf><offset><pack><fill><len><logset><return><last><||><&&><--><++><=<><:=><:<><^=><|=><&=><%=><-=><+=></=><*=><!=><==><<=><>=><<><>><=><^><|><&><-><+><%></><*><!><~><.>
 <-
--> out json // out with json parameter; json is a collection imported by TextFlow.dll 
+-> trace json // trace with json parameter; json is a collection imported by TextFlow.dll 
 [json].sub(free get load press )
 <-
--> out ui // out with ui parameter; ui is a collection imported by ui.dll
+-> trace ui // trace with ui parameter; ui is a collection imported by ui.dll
 [ui].sub(smap gmap setdpi close cursor recovery backup get save pull fill push open )
 <-
 */
@@ -223,7 +268,22 @@ bool out(name,...) // ab =  20; out(ab) /out ab -> [ab]num:20
 
 
 
-#### 1.15: Output to File (outf)
+#### 1.17: Output Result (out)
+
+| Interface | out                | Return results upstream to the call chain (console mode outputs to console; UI window mode outputs to window) |
+| --------- | ------------------ | ------------------------------------------------- |
+| Param     | variable name/null | Variable name to output; when empty, outputs all current variables |
+| Return    | str                | Returns the result as a string (caller receives it directly) |
+
+```c
+str out(name,...) // Returns processed result as a string to the caller
+```
+
+> **Difference between out and trace**: `out` uses the "result channel" — console mode outputs to console, UI mode outputs to window. `trace` uses the "debug channel" — always outputs to debug console. To inspect variables inside threads, use `trace`; `out`'s return result is not receivable by the caller in asynchronous threads.
+
+
+
+#### 1.18: Output to File (outf)
 
 | Interface | outf     | Output data to file                                          |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -237,7 +297,7 @@ int outf(filename, data) // outf("data.bin", ' 11 22 33') -> 3 (Write 3 hex byte
 
 
 
-#### 1.16: Read from File (inf)
+#### 1.19: Read from File (inf)
 
 | Interface | inf      | Read data from file   |
 | --------- | -------- | --------------------- |
@@ -250,7 +310,7 @@ data inf("file.txt") // content = inf("config.ini")
 
 
 
-#### 1.17: Set Function Priority (setfunc)
+#### 1.20: Set Function Priority (setfunc)
 
 | Interface | setfunc   | Adjust function execution priority |
 | --------- | --------- | ---------------------------------- |
@@ -264,7 +324,7 @@ bool setfunc("callback", 1) // setfunc("outf", 2)
 
 
 
-#### 1.18: Get System Node (getnode)
+#### 1.21: Get System Node (getnode)
 
 | Interface | getnode | Get platform internal node (parameter/function) by name for remote invocation and script reflection |
 | --------- | ------- | ------------------------------------------------------------ |
@@ -287,7 +347,7 @@ Explanation: Call the platform max function to compare the data value with 5; ob
 
 
 
-#### 1.19: Run Script (runsc)
+#### 1.22: Run Script (runsc)
 
 | Interface | runsc  | Run specified script data       |
 | --------- | ------ | ------------------------------- |
@@ -300,7 +360,7 @@ result runsc{script} // runc{1+2*3} -> {int:7 }
 
 
 
-#### 1.20: Run String Code (runstr)
+#### 1.23: Run String Code (runstr)
 
 | Interface | runstr  | Run code from a string   |
 | --------- | ------- | ------------------------ |
@@ -313,7 +373,7 @@ result runstr(strcode) // runstr("print(\"hello\")") -> ( str[5]"hello" )  or ru
 
 
 
-#### 1.21: JSON Processing (jsonvm)
+#### 1.24: JSON Processing (jsonvm)
 
 | Interface | jsonvm      | Process JSON data (supports internal script execution) |
 | --------- | ----------- | ------------------------------------------------------ |
@@ -326,7 +386,7 @@ fd jsonvm(json_script) // aa ="hellow";bb="123";jsonvm{"key":aa+bb} -> str[19]"{
 
 
 
-#### 1.22: User Input (input)
+#### 1.25: User Input (input)
 
 | Interface | input  | Get user input     |
 | --------- | ------ | ------------------ |
@@ -339,7 +399,7 @@ str input("Enter name: ") // name = sys.input("Your name: ")
 
 
 
-#### 1.23: Load Library (loadlib)
+#### 1.26: Load Library (loadlib)
 
 | Interface | loadlib | Dynamically load a library file |
 | --------- | ------- | ------------------------------- |
@@ -352,7 +412,7 @@ bool loadlib("mylib.dll") // loadlib("test.dll")
 
 
 
-#### 1.24: Unload Library (unload)
+#### 1.27: Unload Library (unload)
 
 | Interface | unload  | Unload a loaded library                      |
 | --------- | ------- | -------------------------------------------- |
@@ -365,20 +425,37 @@ bool unload(handle) // unload("test")
 
 
 
-#### 1.25: Create Thread
+#### 1.28: Create Thread
 
-| Interface | createth | Allocate CPU and memory resources from the system to independently execute a Y-language code block |
-| --------- | -------- | ------------------------------------------------------------ |
-| Param     | Ycode    | Y-language code block enclosed in {}                         |
-| Return    | fd       | Returns thread handle on success; returns false on failure   |
+| Interface | createth   | Allocate CPU and memory resources from the system to independently execute a Y-language code block or invoke a specified function via callback |
+| --------- | ---------- | ------------------------------------------------------------ |
+| Param     | Ycode/func | Y-language code block enclosed in {} or function name (with execution parameters) |
+| Param     | null/args  | Function parameters (present when first param is a function name); frozen-copied at creation, e.g. `(fd)` or `(a, b, c)` |
+| Return    | fd         | Returns thread handle on success; returns false on failure   |
+
+Two calling modes are supported:
+
+**Mode 1: Code Block Mode**
 
 ```c
-fd createth(Ycode) // fh=createth({ while(1) {out11;sleep(1000);}})
+fd createth(Ycode) // fh=createth({i=0; while(10) {trace(i++); sleep(1);}})
+```
+
+**Mode 2: Function Callback Mode (parameters frozen at creation)**
+```c
+fd createth(func, (args))
+// Example 1: createth(uart, (fd))           // Single parameter; fd frozen at creation time
+// Example 2: createth(process, (a, b, c))   // Multiple parameters; all frozen
+// Ideal for creating threads inside loops; avoids external variables being overwritten
+for(i=0; i<10; i++) {
+    fd = uart.open(printf("com%d", i), 9600);
+    createth(uart, (fd));    // fd frozen at creation moment; won't be overwritten by next loop iteration
+}
 ```
 
 
 
-#### 1.26: Kill Thread
+#### 1.29: Kill Thread
 
 | Interface | killth | Find the thread by handle and terminate it (Note: killth may have resource release issues; it's best for Ycode to end on its own) |
 | --------- | ------ | ------------------------------------------------------------ |
@@ -391,7 +468,7 @@ bool killth(fd) // fh=createth({...}); ...... killth(fh)
 
 
 
-#### 1.27: Create Timer
+#### 1.30: Create Timer
 
 | Interface | starttimer         | Create a scheduled task to run a Y-language code block at a specified time |
 | --------- | ------------------ | ------------------------------------------------------------ |
@@ -408,7 +485,7 @@ fd starttimer(Ycode,starttimeS,IntervaltimeS/null)
 
 
 
-#### 1.28: Stop Timer
+#### 1.31: Stop Timer
 
 | Interface | stoptimer | Find the timer by handle and stop it              |
 | --------- | --------- | ------------------------------------------------- |
@@ -421,7 +498,7 @@ bool stoptimer(fd) // ft=starttimer({...},...); ...... stoptimer(ft)
 
 
 
-#### 1.29: URL Parse (urlparse)
+#### 1.32: URL Parse (urlparse)
 
 | Interface | urlparse         | Parse a URL string           |
 | --------- | ---------------- | ---------------------------- |
@@ -434,7 +511,7 @@ parsed urlparse(url) // urlparse("https://www.example.com") -> "www.example.com"
 
 
 
-#### 1.30: Network Connect (connect)
+#### 1.33: Network Connect (connect)
 
 | Interface | connect | Establish a network connection |
 | --------- | ------- | ------------------------------ |
@@ -452,7 +529,7 @@ sock connect(host, port, type)
 
 
 
-#### 1.31: Send Data (send)
+#### 1.34: Send Data (send)
 
 | Interface | send   | Send data over network       |
 | --------- | ------ | ---------------------------- |
@@ -466,7 +543,7 @@ int send(sock, buffer) // sent = send(connection, sedata)
 
 
 
-#### 1.32: Receive Data (recv)
+#### 1.35: Receive Data (recv)
 
 | Interface | recv     | Receive data from network    |
 | --------- | -------- | ---------------------------- |
@@ -480,7 +557,7 @@ data recv(sock, timeoutS) // redata = recv(fd, 20)
 
 
 
-#### 1.33: Disconnect (disconnect)
+#### 1.36: Disconnect (disconnect)
 
 | Interface | disconnect | Disconnect network connection |
 | --------- | ---------- | ----------------------------- |
@@ -491,15 +568,3 @@ data recv(sock, timeoutS) // redata = recv(fd, 20)
 bool disconnect(sock) // disconnect(fd)
 ```
 
-
-
-#### 1.34: Set Font (setfont)
-
-| Interface | setfont   | Set current font        |
-| --------- | --------- | ----------------------- |
-| Param     | font_desc | Font description string |
-| Return    | bool      | Returns true on success |
-
-```c
-bool setfont("Arial,12") // .setfont("SimSun,14")
-```

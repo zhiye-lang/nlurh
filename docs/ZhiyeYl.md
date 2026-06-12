@@ -22,15 +22,15 @@ Supports floating-point and integer values (decimal, hexadecimal, octal).
 
 ### 2. String Type
 
-**Double-quoted string `"..."`** — fully compatible with C:
+**Double-quoted string `"..."`** — Compatible with Java/C# (differs from C/C++ where `\xHH` is greedy; on the Zhiye platform `\xHH` is fixed at 2 hex digits):
 
-```c
+```c#
 "abc\"123\""           // String: abc"123"
-"\x31\x42\x53\r\n"     // Hex escapes + CRLF
-"Hello\nWorld\t!"      // Standard escape characters
+"\x312A\r\n"           // Hex escape "1" + "2A" + CRLF
+"\u4E2D11\U0001F4AC22" // Unicode -> "中11💬22"
 ```
 
-**Supported escape characters:** `\n`, `\t`, `\r`, `\"`, `\\`, `\xHH`
+**Supported escape characters:** `\n`, `\t`, `\r`, `\"`, `\\`, `\xHH`, `\uHHHH`, `\UHHHHHHHH` (Note: `\xHH` is fixed at 2 hex digits on Zhiye platform, not greedy like C/C++)
 
 ### 3. Byte Buffer Type (Y Language Original)
 
@@ -73,13 +73,26 @@ c = '112233'         // Byte buffer
 d = 10~100           // Range
 ```
 
-### 2. Scope
+### 2. Auto-Expansion
+
+Collections/arrays auto-expand without needing pre-allocation — indexing past the current bound automatically grows the container:
+
+```y
+fd = ();                    // Empty collection; only collections auto-expand on Zhiye platform
+for(i=0; i<10; i++) {
+    fd[i] = i;              // fd auto-expands to fd[9] — no append or pre-allocation needed
+}
+//->trace fd
+//[fd]sub(int:0 int:1 int:2 int:3 int:4 int:5 int:6 int:7 int:8 int:9 )
+```
+
+### 3. Scope
 
 - Supports global and local parameters
 - Variables defined inside a function are local
 - Variables defined at the top level are global
 
-### 3. Parameter Subscript Notation `[..]`
+### 4. Parameter Subscript Notation `[..]`
 
 `[..]` is used to index or slice a parameter — the core subscript syntax in Y Language's parameter system:
 
@@ -111,7 +124,7 @@ buf[0~4]         // Elements 1 through 5 of buf (inclusive)
 | Comparison      | `>` `>=` `<` `<=` `==`           |
 | Assignment      | `=`                              |
 
-### 2. String Operators
+### 2. String and Buffer Operators
 
 | Operation              | Description       | Example                  |
 | ---------------------- | ----------------- | ------------------------ |
@@ -293,6 +306,8 @@ def max(a, b) {
 }
 ```
 
+**Note:** `def` can also define local parameters when no parentheses follow: `def par;` creates a local parameter `par` isolated from globals.
+
 **Usage:**
 
 ```y
@@ -365,17 +380,46 @@ runstr(inf"sub_program.txt");
 - Supports modular development
 - Supports recursive calls
 
+## X. Expression Evaluation Rules
+
+Y Language splits code into segments delimited by `,` or `;`. Within each segment, evaluation strictly follows this order:
+
+1. **Parentheses first** — `[]` and `()` are evaluated first
+2. **Operator precedence** — Higher-precedence operators evaluate first (see Appendix A)
+3. **Same-precedence associativity** — according to the associativity direction in Appendix A
+
+```y
+// Example: a[i++] = i++
+// Assume i = 0
+
+Step 1: [i++] parentheses first → i changes from 0 to 1, index value is 0
+Step 2: = assignment has lowest precedence → right side evaluated first
+Step 3: Right side i++ → i changes from 1 to 2, expression value is 1
+
+Result: a[0] = 1, i = 2
+```
+
+> **Difference from C/C++:** In C/C++, modifying the same variable multiple times within a single expression is **undefined behavior** — the result is unpredictable. Y Language explicitly defines the evaluation order, so results are always reproducible.
+
+**Segment examples:**
+```y
+a = 1, b = 2;            // Two segments: a=1 and b=2
+c = a[i];                // One segment: [i] first, then =
+d = max(x,y) + min(a,b); // One segment: both () first, then +, then =
+```
+
 ## Appendix A: Operator Precedence (High → Low)
 
-| Priority | Operators                 | Associativity |
-| -------- | ------------------------- | ------------- |
-| 1        | `()` function call        | Left → Right  |
-| 2        | `*` `/` `%`               | Left → Right  |
-| 3        | `+` `-`                   | Left → Right  |
-| 4        | `>` `>=` `<` `<=` `==`    | Left → Right  |
-| 5        | `&&` `||`                 | Left → Right  |
-| 6        | `|>` pipe                 | Left → Right  |
-| 7        | `=` `+=` `-=` `*=` `/=`   | Right → Left  |
+| Priority | Operators                                          | Associativity |
+| -------- | -------------------------------------------------- | ------------- |
+| 1        | `[]` `()` subscript and parentheses               | Left → Right  |
+| 2        | `*` `/` `%` `.*` `./`                             | Left → Right  |
+| 3        | `+` `-`                                            | Left → Right  |
+| 4        | `>` `>=` `<` `<=` `==`                             | Left → Right  |
+| 5        | `&&` `||`                                          | Left → Right  |
+| 6        | `|>` pipe                                          | Left → Right  |
+| 6        | Type-I function                                    | Right → Left  |
+| 7        | `=` `+=` `-=` `*=` `/=` `&=` `|=` `^=` `%=`       | Right → Left  |
 
 ## Appendix B: Data Types Summary
 

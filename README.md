@@ -91,9 +91,11 @@ nlurh/           -- Project root (Zhiye.Unity)
 
 Homepage: https://y-lang.tech or https://y-lang.org.cn
 
+VS Runtime Environment Supplement Library: https://pan.baidu.com/s/1BvFGyQlfZKh2aR0Te8Imgw?pwd=sydd  (nlurh_runtime_check.rar — extract to the nlurh folder and run the batch file)
+
 chat window source code: https://gitee.com/sz-ai/zhiye_chat_ui.git
 
-chat window exe (compiled from the above source code): https://pan.baidu.com/s/1AuhBzTNssm64AVLJlhiqtQ?pwd=1ef2
+chat window exe (compiled from the above source code): https://pan.baidu.com/s/1AuhBzTNssm64AVLJlhiqtQ?pwd=1ef2  (put the corresponding-bit exe into the corresponding nlu_run_XXbit folder, double-click to run, core store password is "1234")
 
 
 
