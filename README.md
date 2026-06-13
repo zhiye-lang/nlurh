@@ -91,64 +91,45 @@ nlurh/           -- Project root (Zhiye.Unity)
 
 Homepage: https://y-lang.tech or https://y-lang.org.cn
 
-VS Runtime Environment Supplement Library: https://pan.baidu.com/s/1BvFGyQlfZKh2aR0Te8Imgw?pwd=sydd  (nlurh_runtime_check.rar — extract to the nlurh folder and run the batch file)
+chat window source code (Tauri-based): https://gitee.com/sz-ai/zhiye_chat_ui.git
 
-chat window source code: https://gitee.com/sz-ai/zhiye_chat_ui.git
+### Windows Runtime Environment
 
-chat window exe (compiled from the above source code): https://pan.baidu.com/s/1AuhBzTNssm64AVLJlhiqtQ?pwd=1ef2  (put the corresponding-bit exe into the corresponding nlu_run_XXbit folder, double-click to run, core store password is "1234")
-
-
+For fresh systems without Visual Studio, navigate to `win-base-env/` for environment setup instructions and installation scripts. See [win-base-env/README.md](../win-base-env/README.md).
 
 
-### Claude Code AI Assistant (Skill Tool)
-
-This project includes a built-in **DLL External Extension Skill** for Claude Code — download and use AI-assisted development right away.
-
-**Setup**:
-1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) (Anthropic's official AI coding assistant)
-2. Open a terminal in this project directory
-3. Run `claude` and type `/nlu` to load the full knowledge base
-
-**How to Use**:
-
-| Method | Action | Example |
-|--------|--------|---------|
-| Slash command | Type `/nlu` | Load the DLL extension knowledge base, AI guides you step by step |
-| Natural question | Ask directly | "What interfaces does ui.dll have?", "How do I build a serial port DLL?" |
-| Build assist | Let AI compile for you | "Build dll_nlu3 for 64-bit" |
-
-**Skill Capabilities**:
-- Y Language syntax reference and examples
-- All built-in DLL interface lookup (ui / crypt / uart / tts / mark / TextFlow)
-- C/C++ DLL development template generation
-- Build → Deploy → Test one-click workflow
-- Platform API guidance (file I/O, networking, threading, timers, etc.)
-
-**How It Works**: Claude Code automatically reads `CLAUDE.md` on startup for project context, and auto-discovers skill files in the `.claude/skills/` directory. No configuration needed — it just works out of the box.
 
 
-### WorkBuddy AI Assistant (Skill Tool)
+### Zhiye Convergence — The Bridge Between AI and Everything
 
-This project also includes a built-in **DLL External Extension Skill** for WorkBuddy, the Tencent AI desktop agent. Available for both domestic and international users.
+Zhiye is a **convergence platform**: one side connects to everything (hardware, sensors, devices), the other side connects directly to AI. **Y Language** is the universal bridge — it carries interactions between AI and Zhiye, and also orchestrates collaboration among Zhiye's internal modules. Y Language bridges everything. Zhiye dramatically lowers the barrier for industries to adopt AI, providing an efficient, infinitely scalable solution for industry AI.
 
-> **Prerequisite**: No matter which tool you use, you **must open the `nlurh/` folder** as the project root for the skill files to be auto-discovered.
+Going further: after understanding Zhiye's third-party extension template, AI can **write C++ DLLs, compile them, test them, and use them — all on its own**, continuously expanding Zhiye's capability boundary. Zhiye grows infinitely alongside AI.
 
-**Using WorkBuddy (International Edition)**:
+> **Prerequisite**: No matter which AI tool you use, you **must open the `nlurh/` folder** as the project root for the skill files to be auto-discovered.
 
-1. Install [WorkBuddy](https://www.workbuddy.ai) (international) or [WorkBuddy CN](https://www.codebuddy.cn) (domestic)
-2. Open the `nlurh/` folder as a project in WorkBuddy
-3. Just mention **Zhiye** (or 支叶) — the skill loads automatically
+#### AI Calls Zhiye (Using Existing Capabilities)
 
-| Usage | Example |
-|-------|---------|
-| Casual mention | "Build a serial port tool with Zhiye", "How does Zhiye handle encryption?" |
-| Interface lookup | "What interfaces does ui.dll have?", "How to use crypt.dll SM2 signing?" |
-| Build assist | "Build dll_nlu3 for 64-bit" |
+| Method | Description | Example |
+|--------|-------------|---------|
+| Y Language direct | AI writes Y Language code to control Zhiye's existing DLLs | `cam.open(0)` opens camera, `tts.pay("Hello")` speaks |
+| Skill lookup | AI uses built-in Skills to quickly query any DLL interface and Y Language usage | "How does ui.dll draw?", "How to use crypt.dll SM2 signing?" |
 
-**Skill Capabilities**:
-- Y Language syntax reference and examples
-- All built-in DLL interface lookup (ui / crypt / uart / tts / mark / TextFlow)
-- C/C++ DLL development template generation
-- Build → Deploy → Test one-click workflow
-- Platform API guidance (file I/O, networking, threading, timers, etc.)
+#### AI Evolves Zhiye (Develop, Test, Use New Capabilities)
 
+| Stage | What AI Does |
+|-------|-------------|
+| Develop | AI references `examples/dll_nlu3/` template to generate new C++ extension DLL code |
+| Build | AI invokes MSBuild to compile → outputs .dll |
+| Deploy | AI copies .dll to `nlu_run_64bit/dll/` |
+| Load | AI uses `loadlib"dll/newlib.dll"` in Y Language |
+| Use | AI calls new functions by group name, closing the business loop |
+
+#### Tool Access
+
+| Tool | Setup | Trigger |
+|------|-------|---------|
+| Claude Code | Terminal → `nlurh/`, run `claude` | Mention Zhiye or type `/nlu` |
+| WorkBuddy | Open `nlurh/` folder with WorkBuddy | Mention Zhiye to auto-load |
+
+> Built-in `.claude/skills/` and `.workbuddy/skills/` Skill files contain the complete knowledge base: Y Language syntax, all DLL interfaces, development templates, and self-test workflows. Works out of the box after cloning.
