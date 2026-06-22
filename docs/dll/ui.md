@@ -6,261 +6,277 @@
     🇨🇳 中文 (Gitee)
   </a>
 </div>
-
 # UI Component Library ui.dll Usage Guide
 
-Z-Language Interface Specification
+Y-Language Interface Specification
 
-------
-
-### 1: Basic Interfaces(ArrayName"ui": using the out ui command can display all subset interfaces))
+### 1: Basic Interfaces (Group "ui": use `out ui` to list all sub-interfaces)
 
 ```jade
----<out ui
-[ui].sub(smap gmap setdpi close cursor recovery backup get save pull fill push open )
+-> out ui
+[ui].sub(unlockwd wdfill wdline wdpoint lockwd resizemap smap gmap setdpi close cursor recovery backup get save pull fill push open )
 ```
 
 ------
 
-
-
 ##### 1.1: Get Image Data
 
-| Interface | `ui.gmap`  | Retrieves image data                 |
-| --------- | ---------- | ------------------------------------ |
-| Parameter | `pathName` | File path                            |
-| Returns   | `mapdata`  | Success: image data Failure: `false` |
+| Interface | `ui.gmap`  | Retrieves image data                                              |
+| --------- | ---------- | ---------------------------------------------------------------- |
+| Parameter | `pathName` | File path (supports: bmp, png, jpg, tga, webp)                   |
+| Returns   | `mapdata`  | Success: image data; Failure: `false`                            |
 
-```c++
-buf ui.gmap(pathName) // Example: mapdata = ui.gmap("test.png")  
+```c
+buf ui.gmap(pathName) // mapdata = ui.gmap("test.png")
 ```
 
 ##### 1.2: Save Image Data
 
-| Interface  | `ui.smap`            | Saves image data to file                  |
-| ---------- | -------------------- | ----------------------------------------- |
-| Parameters | `pathName` `mapdata` | File path Image data                      |
-| Returns    | `int`                | Success: saved file size Failure: `false` |
+| Interface   | `ui.smap`            | Saves image data to file                                 |
+| ----------- | -------------------- | --------------------------------------------------------- |
+| Parameters  | `pathName` `mapdata` | File path Image data                                      |
+| Returns     | `int`                | Success: file size in bytes; Failure: `false`             |
 
-```c++
-int ui.smap(pathName, mapdata) // Example: smap("test2.png", mapdata)  
+```c
+int ui.smap(pathName, mapdata) // smap("test2.png", mapdata)
 ```
 
 ##### 1.3: Display Image Data
 
-| Interface | `ui.dmap` | Displays image in a window       |
-| --------- | --------- | -------------------------------- |
-| Parameter | `mapdata` | Image data                       |
-| Returns   | `bool`    | Success: `true` Failure: `false` |
+| Interface | `ui.dmap` | Creates a window on screen to display image data    |
+| --------- | --------- | -------------------------------------------------- |
+| Parameter | `mapdata` | Image data                                         |
+| Returns   | `bool`    | Success: `true`; Failure: `false`                  |
 
-```c++
-bool ui.dmap(mapdata) // Example: ui.dmap(mapdata) OR ui.dmap(ui.gmap("test.png"))  
+```c
+bool ui.dmap(mapdata) // dmap(mapdata)  or  dmap(gmap("test.png"))
+```
+
+##### 1.4: Resize Image Data
+
+| Interface   | `ui.resizemap` | Resizes image data                                              |
+| ----------- | -------------- | -------------------------------------------------------------- |
+| Parameters  | `mapdata`      | Source image data                                              |
+| Parameter   | `int`          | Target width                                                   |
+| Parameter   | `int/null`     | Target height (when absent, equals width to make a square)     |
+| Returns     | `mapdata`      | Success: new image data; Failure: `false`                      |
+
+```c
+mapdata ui.resizemap(mapdata, width, height/null)
+// m = ui.resizemap(gmap("test.png"), 800, 600)  → resize to 800x600
+// m = ui.resizemap(gmap("test.png"), 800)       → resize to 800x800 (square)
 ```
 
 ------
 
-### 2: Advanced Interfaces(ArrayName"ui")
+### 2: Advanced Interfaces (Group "ui")
 
-*^(Supports multi-window, scroll wheel, cursor customization)*
+*^(Adds multi-window support, scroll wheel, cursor customization)*
 
 ##### 2.1: Create Window
 
-| Interface  | `ui.open`      | Creates display window                  |
-| ---------- | -------------- | --------------------------------------- |
-| Parameters | `w` `h` `name` | Window width Window height Window title |
-| Returns    | `fd`           | Success: window handle Failure: `false` |
+| Interface   | `ui.open`      | Creates and displays a window                       |
+| ----------- | -------------- | --------------------------------------------------- |
+| Parameters  | `w` `h` `name` | Window width, Window height, Window title          |
+| Returns     | `fd`           | Success: window handle; Failure: `false`            |
 
-```c++
-bool ui.open(w, h, name) // Example: fd = ui.open(640, 480, "test")  
+```c
+bool ui.open(w, h, name) // fd = ui.open(640, 480, "test")
 ```
 
 ##### 2.2: Close Window
 
-| Interface | `closewd` | Closes window                    |
-| --------- | --------- | -------------------------------- |
-| Parameter | `fd`      | Window handle                    |
-| Returns   | `bool`    | Success: `true` Failure: `false` |
+| Interface | `ui.close` | Closes a window opened by `ui.open`             |
+| --------- | ---------- | ----------------------------------------------- |
+| Parameter | `fd`       | Window handle                                   |
+| Returns   | `bool`     | Success: `true`; Failure: `false`               |
 
-```c#
-bool ui.close(fd) // Example: ui.close(fd)  
+```c
+bool ui.close(fd) // ui.close(fd)
 ```
 
 ##### 2.3: Fill Window
 
-| Interface  | `ui.fill`            | Fills window with color                                      |
-| ---------- | -------------------- | ------------------------------------------------------------ |
-| Parameters | `fd` `colour` `flag` | Window handle Color (0xRRGGBB format) Blending mode: ¬- `flag=1`: Additive ¬- `flag=-1`: Subtractive ¬- `flag=2/±2`: Alpha blending |
-| Returns    | `bool`               | Success: `true` Failure: `false`                             |
+| Interface   | `ui.fill`            | Fills the window with a color                                                   |
+| ----------- | -------------------- | -------------------------------------------------------------------------------- |
+| Parameters  | `fd` `colour` `flag` | Window handle; Color in 0xRRGGBB hex (or 0xaaRRGGBB where aa=alpha, 00=opaque); Blending flag |
+| Returns     | `bool`               | Success: `true`; Failure: `false`                                               |
 
-```c++
-bool ui.fill(fd, colour, flag) // Examples: ui.fill(fd, 0xFF0000, 2) // Red window ui.fill(fd, 0x800000FF, 2) // Add 50% blue  
+> Blending flag (only effective when aa>0):
+> - absent: fill only, no display
+> - `1`: additive blend, + (256 - aa) / 256
+> - `-1`: subtractive blend
+> - `2` / `-2`: as above plus display push
+
+```c
+bool ui.fill(fd, colour, flag)
+// Examples:
+// ui.fill(fd, 0xFF0000, 2)        → full red window
+// ui.fill(fd, 0x800000FF, 2)      → add 50% blue to window
 ```
 
 ##### 2.4: Draw to Window
 
-| Interface  | `ui.push`                  | Draws image to window                                     |
-| ---------- | -------------------------- | --------------------------------------------------------- |
-| Parameters | `fd` `mapdata` `left, top` | Window handle Image data Start coordinates (default: 0,0) |
-| Returns    | `bool`                     | Success: `true` Failure: `false`                          |
+| Interface   | `ui.push`                  | Draws image data to the window and displays it      |
+| ----------- | -------------------------- | -------------------------------------------------- |
+| Parameters  | `fd` `mapdata` `left, top` | Window handle; Image data; Start coordinates (default 0,0 when absent) |
+| Returns     | `bool`                     | Success: `true`; Failure: `false`                  |
 
-```c++
-bool ui.push(fd, mapdata, left, top) // Examples: ui.push(fd, mapdata) // Draw at (0,0) ui.push(fd, mapdata, 20, 10) // Draw at (20,10)  
+```c
+bool ui.push(fd, mapdata, left, top)
+// Examples:
+// ui.push(fd, mapdata)         → draw at (0,0)
+// ui.push(fd, mapdata, 20, 10) → draw at (20,10)
 ```
 
 ##### 2.5: Backup Window
 
-| Interface  | `ui.backup`    | Backs up window region                                       |
-| ---------- | -------------- | ------------------------------------------------------------ |
-| Parameters | `fd` `x,y,w,h` | Window handle Region coordinates (optional)                  |
-| Returns    | `mapdata/bool` | With region: image data Without region: `true` Failure: `false` |
+| Interface   | `ui.backup`    | Backs up the current window image data                                      |
+| ----------- | -------------- | ---------------------------------------------------------------------------- |
+| Parameters  | `fd` `x,y,w,h` | Window handle; Region (x,y,width,height) — omit to backup the whole window to internal buffer |
+| Returns     | `mapdata/bool` | With region params: image data; Without: `true`; Failure: `false`           |
 
-```c++
-// Full window backup: ui.backup(fd) 
-// Partial backup: md = ui.backup(fd, 20, 10, 80, 100)  
+```go
+bool ui.backup(fd)  \  mapdata ui.backup(fd, x, y, w, h)
+// ui.backup(fd)                       → backup whole window to internal buffer
+// md = ui.backup(fd, 20, 10, 80, 100)  → get mapdata of 80x100 region at (20,10)
+// md can be passed to ui.push() or ui.smap() to save as image
 ```
 
 ##### 2.6: Restore Window
 
-| Interface  | `ui.recovery`  | Restores backup data                    |
-| ---------- | -------------- | --------------------------------------- |
-| Parameters | `fd` `x,y,w,h` | Window handle Restore region (optional) |
-| Returns    | `bool`         | Success: `true` Failure: `false`        |
+| Interface   | `ui.recovery`  | Restores previously backed-up data to the window and displays it   |
+| ----------- | -------------- | ------------------------------------------------------------------ |
+| Parameters  | `fd` `x,y,w,h` | Window handle; Restore region — omit to restore the whole window  |
+| Returns     | `bool`         | Success: `true`; Failure: `false`                                  |
 
-```c++
-// Full restore: ui.recovery(fd)
-// Partial restore: ui.recovery(fd, 20, 10, 80, 100)  
+```c#
+bool ui.recovery(fd)  \  bool ui.recovery(fd, x, y, w, h)
+// (call ui.backup(fd) first before ui.recovery)
+// ui.recovery(fd)                       → restore whole window
+// ui.recovery(fd, 20, 10, 80, 100)      → restore 80x100 region at (20,10)
 ```
 
 ##### 2.7: Save Window
 
-| Interface  | `ui.save`      | Saves window to image file  |
-| ---------- | -------------- | --------------------------- |
-| Parameters | `fd` `mapname` | Window handle Filename      |
-| Returns    | `bool`         | Success: `1` Failure: other |
+| Interface   | `ui.save`      | Saves current window data to an image file |
+| ----------- | -------------- | ------------------------------------------ |
+| Parameters  | `fd` `mapname` | Window handle; Image filename              |
+| Returns     | `bool`         | Success: `1`; Failure: other               |
 
-```c++
-bool ui.save(fd, mapname) // Example: ui.save(fd, "mapwd.png")  
+```c
+bool ui.save(fd, mapname)
+// ui.save(fd, "mapwd.png")  → save fd window data to mapwd.png
 ```
 
 ##### 2.8: Set Cursor Style
 
-| Interface  | `ui.cursor`  | Sets cursor style                                            |
-| ---------- | ------------ | ------------------------------------------------------------ |
-| Parameters | `fd` `index` | Window handle Cursor ID: ¬- 32649: Hand pointer ¬- 32512: Arrow pointer |
-| Returns    | `bool`       | Success: `true` Failure: `false`                             |
+| Interface   | `ui.cursor`  | Sets cursor style                                            |
+| ----------- | ------------ | ------------------------------------------------------------ |
+| Parameters  | `fd` `index` | Window handle; Cursor ID (32649=hand pointer, 32512=arrow)  |
+| Returns     | `bool`       | Success: `true`; Failure: `false`                           |
 
-```c++
-bool ui.cursor(fd, index) 
-// Examples: ui.cursor(fd, 32649) 
-// Hand cursor ui.cursor(fd, 32512) // Arrow cursor  
+```c
+bool ui.cursor(fd, index)
+// ui.cursor(fd, 32649)  → hand pointer
+// ui.cursor(fd, 32512)  → arrow pointer
 ```
 
 ##### 2.9: Get Window Core API
 
-| Interface | `ui.get`      | Gets low-level window API |
-| --------- | ------------- | ------------------------- |
-| Returns   | `UI_FuncBase` | Core API structure        |
+| Interface | `ui.get`      | Gets the low-level window API (creates window directly in C without going through Y Language, unlike `ui.open`) |
+| --------- | ------------- | ------------------------------------------------------------------------------------------------- |
+| Returns   | `UI_FuncBase` | Internal API structure                                                                            |
 
-```c++
-UI_FuncBase ui.get() // For direct C/C++ development  
+```
+UI_FuncBase ui.get()
+// For direct C/C++ development; see "C Program Reference Definitions 2" for UI_FuncBase definition
 ```
 
 ##### 2.10: Get Window Control Handle
 
-| Interface | `ui.pull`        | Gets window control handle               |
-| --------- | ---------------- | ---------------------------------------- |
-| Parameter | `fd`             | Window handle                            |
-| Returns   | `UI_FuncSynPlus` | Control structure (see definition below) |
+| Interface | `ui.pull`        | Gets the window control handle so other libraries can control the window directly via C |
+| --------- | ---------------- | --------------------------------------------------------------------------------------- |
+| Parameter | `fd`             | Window handle                                                                          |
+| Returns   | `UI_FuncSynPlus` | Success: control structure (see "C Program Reference Definitions 2"); Failure: `false` |
 
-```c++
-UI_FuncSynPlus ui.pull(fd) // Usage in Zhiye: getuibase(ui.pull())  
+```c
+UI_FuncSynPlus ui.pull(fd)
+// Example: in Zhiye chat window, input: getuibase(pullwd());
 ```
 
-------
+```c
+//===================== C Program Reference Definitions 2 =============================
+// First download the "Third-party Function Access" code, add the following content, 
+// compile the dll, then load with loadlib in Zhiye.
+typedef struct _WindowBase WindowBase;
+//================ Keyboard & Mouse Callback Function Definitions ========================
+typedef int (*FUNC_MouseLdown)(bitmap_t*, int x, int y);       // Left click at x,y in window
+typedef int (*FUNC_MouseRdown)(bitmap_t*, int x, int y);       // Right click at x,y in window
+typedef int (*FUNC_MouseMove)(bitmap_t*, int type, int x, int y); // type=0 just move, type=1 move with left button, type=2 with right
+typedef int (*FUNC_MouseWheel)(bitmap_t*, int updown);         // positive=scroll down, negative=scroll up
+typedef int (*FUNC_Keyboard)(bitmap_t*, int down, int key, int timems); // down=true means pressed
+#define WM_WD_REFRESH  'P' // Return this from callbacks when canvas content was modified and needs refresh.
+//======================== Graphics Data Structure Definitions ==========================
+typedef struct {
+    BYTE b;
+    BYTE g;
+    BYTE r;
+    BYTE a;
+} rgba_t;
 
-### Data Structures & Implementation
+typedef union {
+    rgba_t  t;
+    DWORD   rgba;
+} bitmap_trgb;
 
-```
-// ===================== C Program Reference Definitions =====================  
+typedef struct {
+    DWORD w;
+    DWORD h;
+    bitmap_trgb* data;
+} bitmap_t;
 
-// Bitmap structure  
-typedef struct {  
-    BYTE b;  
-    BYTE g;  
-    BYTE r;  
-    BYTE a;  
-} rgba_t;  
-
-typedef union {  
-    rgba_t t;  
-    DWORD  rgba;  
-} bitmap_trgb;  
-
-typedef struct {  
-    DWORD w;  
-    DWORD h;  
-    bitmap_trgb* data;  
-} bitmap_t;  
-
-// Window control structure  
-typedef struct {  
-    void* fd;  
-    WindowBase* (*LockWindow)(void* fd);  
-    bitmap_t ui;  
-    void (*push)(WindowBase* pWd);  
-    void (*loadKeyMouse)(WindowBase* pWd, FUNC_Keyboard pKeybd, ...);  
-    void (*UnLockWindow)(WindowBase* pWd);  
-} UI_FuncSynPlus;  
-
-// Mouse/Keyboard callback definitions  
-typedef int (*FUNC_MouseLdown)(bitmap_t*, int x, int y);     // Left click  
-typedef int (*FUNC_MouseRdown)(bitmap_t*, int x, int y);     // Right click  
-typedef int (*FUNC_MouseMove)(bitmap_t*, int type, int x, int y);  // Move  
-typedef int (*FUNC_MouseWheel)(bitmap_t*, int updown);       // Wheel  
-typedef int (*FUNC_Keyboard)(bitmap_t*, int down, int key, int timems); // Key events  
-#define WM_WD_REFRESH 'P'  // Refresh required if bitmap modified  
-//==================  pullwindow Return Structure Definition ========================
-//  RGBQUAD
+//==================  pullwindow Return Structure Definition =========================
 typedef struct
 {
     void* fd;
-    pWindowBase (*LockWindow)(HWND hWnd); // UI operation lock to avoid information synchronization issues. Returns NULL if the window has been released and can no longer be operated.
+    pWindowBase (*LockWindow)(HWND hWnd); // UI operation lock to avoid sync issues. Returns NULL if the window has been released.
     bitmap_t ui;
     void (*push)(pWindowBase pWd);          // Push to display.
     void (*loadKeyMouse)(pWindowBase pWd, FUNC_Keyboard pKeybd, FUNC_MouseLdown pLdow, FUNC_MouseRdown pRdown, FUNC_MouseWheel pWheel, FUNC_MouseMove pMove); // Keyboard and mouse callback
     void (*UnLockWindow)(pWindowBase pWd);  // Unlock
 } UI_FuncSyn;
 
-// Add the drawing window operation parameter tSysBaseUi in the code.
+// In your code, add the window operation parameter tSysBaseUi.
 UI_FuncSynPlus tSysBaseUi = { 0 };
 
-//===== Download "Natural Language Understanding NLU - Third-party Function Access" https://gitee.com/kebo521/nlu3
+//===== Download "NLU - Third-party Function Access" https://gitee.com/kebo521/nlu3
 void Keyboard(bitmap_t* pWd, int down, int key, int timems)
 {
     if (down) { // A key is pressed
-        //key, timems
+        // key, timems
     }
     else {
         if (key == 0) {
-        // Window closed, bitmap_t ui has been released. Do not write data to ui.data afterwards.
+            // Window closed; bitmap_t ui has been released. Do not write to ui.data afterwards.
         }
     }
 }
-//---- If mouse functions are required, define the following functions (select as needed) -----------------
-void MouseLdown(bitmap_t* pWd, int x, int y) // Left click. x,y are the coordinates on the window.
+//---- If mouse functions are required, define the following (select as needed) -----------------
+void MouseLdown(bitmap_t *pWd, int x, int y) // Left click at x,y in window
 {
-    // Code to handle left mouse click.
+    // Handle left click.
 }
-void MouseRdown(bitmap_t* pWd, int x, int y) // Right click. x,y are the coordinates on the window.
+void MouseRdown(bitmap_t *pWd, int x, int y) // Right click at x,y in window
 {
-    // Code to handle right mouse click.
+    // Handle right click.
 }
-void MouseMove(bitmap_t* pWd, int type, int x, int y) // type = 0: just moving; type=1: moving with left button pressed; type=2: moving with right button pressed.
+void MouseMove(bitmap_t *pWd, int type, int x, int y) // type=0: just moving; type=1: with left; type=2: with right
 {
-    bitmap_t& wd = *pWd; // pWd will not be NULL. In C++ code, use reference for potential speed improvement.
-    // Code to handle mouse movement.
+    bitmap_t& wd = *pWd; // pWd is never NULL; use reference in C++ for speed
+    // Handle mouse movement.
 }
-void MouseWheel(bitmap_t* pWd, int updown)    // Positive: scroll down; Negative: scroll up.
+void MouseWheel(bitmap_t *pWd, int updown)    // positive=down, negative=up
 {
     if (updown > 0) {
     }
@@ -283,8 +299,8 @@ int FunPullUiBase(EnvP pENV, EXP_UNIT*& pInOutPar)    // (&UiBase)
     tSysBaseUi.ui.w = pSyn->ui.w;
     tSysBaseUi.ui.h = pSyn->ui.h;
     tSysBaseUi.ui.data = pSyn->ui.data;  // Modify display content via tSysBaseUi.ui.data later.
-    tSysBaseUi.push = pSyn->push; // Execute: tSysBaseUi.push(pWd) to push display refresh later.
-    //------ Keyboard or mouse functions require executing callback reverse loading ---------------
+    tSysBaseUi.push = pSyn->push;        // Call tSysBaseUi.push(pWd) to push display refresh.
+    //------ Keyboard or mouse functions require callback reverse-loading ---------------
     WindowBase* pWd = tSysBaseUi.LockWindow(tSysBaseUi.fd);
     if (pWd) {
         (*pSyn->loadKeyMouse)(pWd, Keyboard, MouseLdown, MouseRdown, MouseMove);
@@ -309,8 +325,8 @@ int FunPullUiBase(EnvP pENV, EXP_UNIT*& pInOutPar)    // (&UiBase)
         //pIn->rgba = 0xFFFFFF;
         pIn++;
     }
-    tSysBaseUi.push(pWd); // Push refresh.
-    tSysBaseUi.UnLockWindow(pWd); // Unlock window.
+    tSysBaseUi.push(pWd);           // Push refresh.
+    tSysBaseUi.UnLockWindow(pWd);   // Unlock window.
 */
 //------------- Place FunPullUiBase into the gFuncTbl reference table -----------------
 const DEF_FUNC_Tbl gFuncTbl =
@@ -320,7 +336,7 @@ const DEF_FUNC_Tbl gFuncTbl =
     {
         ......
         "getuibase",    FunPullUiBase,
-        NULL,           NULL,    // End.
+        NULL,           NULL,    // End
     }
 };
 
@@ -328,13 +344,102 @@ const DEF_FUNC_Tbl gFuncTbl =
 typedef struct
 {
     void* (*CreateWd)(int, int, const char*); // CreateWindow(WORD width, WORD height, const char* pName);
-    int (*PullUi)(void*, UI_FuncSyn*); // (void* fd, UI_FuncSyn* pUiSyn)
-    int (*CloseWd)(void*);    // CloseWindow(void* fd);
+    int (*PullUi)(void*, UI_FuncSyn*);        // (void* fd, UI_FuncSyn* pUiSyn)
+    int (*CloseWd)(void*);                    // CloseWindow(void* fd);
 } UI_FuncBase;
 
 loadwdapi(getwd()); // Third-party library implements loadwdapi to accept UI_FuncBase data. Same as: pullwd method.
+
 ```
 
-**Full Implementation Guide**:
- [Natural Language Understanding NLU - Third-party Integration](https://gitee.com/kebo521/nlu3)
+After compiling, load with `loadlib` in Zhiye: first create a window `fd = ui.open(640, 480, "test")`, then call `getuibase(ui.pull(fd))` to obtain the UI control parameters.
 
+------
+
+### 3: Critical-Section Drawing Interfaces (Group "ui")
+
+##### 3.1: Lock Window
+
+| Interface | `ui.lockwd` | Locks the window and maps the canvas         |
+| --------- | ----------- | -------------------------------------------- |
+| Parameter | `fd`        | Window handle                                |
+| Returns   | `hd`        | Success: lock handle; Failure: `false`       |
+
+```c
+hd ui.lockwd(fd) // hd = ui.lockwd(fd)
+```
+
+##### 3.2: Draw Point
+
+| Interface | `ui.wdpoint` | Draw a point on the canvas (buffered, not yet displayed)        |
+| --------- | ------------ | ---------------------------------------------------------------- |
+| Parameter | `hd`         | Lock handle                                                      |
+| Parameter | `x`          | X coordinate (top-left = 0, left → right)                        |
+| Parameter | `y`          | Y coordinate (top → bottom)                                      |
+| Parameter | `color`      | Color in 0xAARRGGBB (32-bit), AA = alpha                        |
+| Returns   | `null`       | No return value                                                  |
+
+```c
+Format 1: ui.wdpoint(hd, x, y, color)
+// ui.wdpoint(hd, 20, 30, 0xFF0000)  → red point at (20,30)
+
+Format 2: ui.wdpoint(hd, (x, y, color))
+// For Y interfaces that return (x, y, color) in one call, e.g. ui.wdpoint(hd, funXX(sin))
+```
+
+##### 3.3: Draw Line
+
+| Interface | `ui.wdline` | Draw a line on the canvas (buffered, not yet displayed)                  |
+| --------- | ----------- | ----------------------------------------------------------------------- |
+| Parameter | `hd`        | Lock handle                                                             |
+| Parameter | `x1~x2`     | X range (from x1 to x2)                                                 |
+| Parameter | `y1~y2`     | Y range (from y1 to y2) — draws a line from (x1,y1) to (x2,y2)          |
+| Parameter | `color`     | Color in 0xAARRGGBB (32-bit), AA = alpha                                |
+| Returns   | `null`      | No return value                                                         |
+
+```c
+Format 1: ui.wdline(hd, x1~x2, y1~y2, color)
+// ui.wdline(hd, 10~20, 30~60, 0x00FF00)  → green line from (10,30) to (20,60)
+
+Format 2: ui.wdline(hd, (x1~x2, y1~y2, color))
+// For Y interfaces that return the params as one tuple, e.g. ui.wdline(hd, funXY(dd))
+```
+
+##### 3.4: Fill Region
+
+| Interface | `ui.wdfill`           | Fill a region on the canvas (buffered, not yet displayed)             |
+| --------- | --------------------- | --------------------------------------------------------------------- |
+| Parameter | `hd`                  | Lock handle                                                           |
+| Parameter | `color`               | Color in 0xAARRGGBB, AA = alpha                                       |
+| Parameter | `x1~x2/null`          | X range to fill (omit = full width)                                   |
+| Parameter | `y1~y2/null`          | Y range to fill (omit = full height)                                  |
+| Returns   | `null`                | No return value                                                       |
+
+```c
+Format 1: ui.wdfill(hd, color, x1~x2/null, y1~y2/null)
+// ui.wdfill(hd, 0xFFFFFF)              → fill whole screen white
+// ui.wdfill(hd, 0x0000FF, 20~50)        → blue from x=20 to x=50
+// ui.wdfill(hd, 0xFFFF00, 20~50, 70~90) → blue rectangle (20..50, 70..90)
+
+Format 2: ui.wdfill(hd, (color, x1~x2/null, y1~y2/null))
+// For Y interfaces that return the params as one tuple, e.g. ui.wdfill(hd, funWH())
+```
+
+##### 3.5: Unlock Window (Refresh)
+
+| Interface | `ui.unlockwd` | Pushes the buffered content to the window for display and unlocks |
+| --------- | ------------- | ----------------------------------------------------------------- |
+| Parameter | `hd`          | Lock handle                                                       |
+| Returns   | `null`        | No return value                                                   |
+
+```c
+ui.unlockwd(hd)
+// Usage:
+// hd = ui.lockwd(fd)
+// ...draw calls...
+// ui.unlockwd(hd)   ← pushes the buffer to the visible window
+```
+
+------
+
+**Base Code for C Program Reference Definitions**: [Natural Language Understanding NLU - Third-party Function Access](https://gitee.com/kebo521/nlu_mt/tree/master/dll_nlu3)
