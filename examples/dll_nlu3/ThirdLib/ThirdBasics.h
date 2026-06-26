@@ -180,6 +180,8 @@ extern DataBufStr* sz_read_file(const char* pathName);
 extern intptr_t sz_save_file(const char* pathName, DataBufStr* pBfS);
 extern int sz_input(const char* title, char* pOut, int oSize);
 extern size_t sz_get_unitname(EnvP pEnv,cunit* pBuf,size_t bSize);
+extern int sz_save_tag_str(u32 Tag,char* pIn, int iLen);
+extern int sz_read_tag_str(u32 Tag,char* pOut, int oSize);
 //------------Tcp---------------------------------------------------
 extern int sz_tcp_connect(const char* host, const char* port, int proto);
 extern int sz_tcp_send(int fd, const unsigned char* buf, size_t len);

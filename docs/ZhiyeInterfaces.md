@@ -568,3 +568,42 @@ data recv(sock, timeoutS) // redata = recv(fd, 20)
 bool disconnect(sock) // disconnect(fd)
 ```
 
+
+
+#### 1.37: Execute System Command (cmd)
+
+| Interface | `cmd`         | Invoke Windows command line to execute a system command, capture stdout+stderr |
+| --------- | ------------- | ------------------------------------------------------------------------------ |
+| Param     | `command`     | Command string to execute                                                      |
+| Return    | `str` / `int` | With output: `str` (stdout+stderr); Without output: `int` (exit code)          |
+
+```c
+result cmd(command)
+// cmd("ver")              → str[44]  Microsoft Windows [Version 10.0...]
+// cmd("dir /b *.exe")     → str[51]  lists all .exe in the current directory
+// cmd("echo hello")       → str[7]   "hello"
+// cmd("gcc --version")    → str[273] gcc version info
+// cmd("gcc bad.c")        → str[106] compile errors (stderr merged into stdout)
+// cmd("exit /b 42")       → int:42   no output → returns process exit code
+```
+
+> **Implementation**: internally invokes `CreateProcessA` with `cmd /c <command>`, and merges stdout+stderr into a single pipe. If the process produces output, the captured text is returned; otherwise the exit code is returned. All CMD built-in syntax is supported (pipes, redirection, etc.).
+
+**Typical Use Cases**
+
+```c
+// Get system info
+ver_info = cmd("ver");
+gcc_ver  = cmd("gcc --version");
+
+// Compile a C extension DLL
+result = cmd("gcc -shared myext.c -o dll/myext.dll");
+if (type(result) == "int") { trace("compile failed, exit code=", result); }
+
+// Combine with agent to auto-compile AI-generated code
+code = str.betweens(resp, "```c", "```");
+outf("_gen.c", code);
+cmd("gcc -shared _gen.c -o dll/_gen.dll");
+loadlib("dll/_gen.dll");
+```
+
