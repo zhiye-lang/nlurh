@@ -92,7 +92,40 @@ for(i=0; i<10; i++) {
 - Variables defined inside a function are local
 - Variables defined at the top level are global
 
-### 4. Parameter Subscript Notation `[..]`
+### 4. `$F` Tag Parameters
+
+The `$F` series is a tag parameter system independent from regular variables, with its own namespace, global scope, and lifetime that survives function exits:
+
+| Property  | Description |
+|-----------|-------------|
+| Format    | `$F` + uppercase hex digits (0-9, A-F), e.g. `$FA123467`, `$F1A`, `$F0`. Lowercase (a-f) not supported; G-z are invalid |
+| Capacity  | 32-bit index, maximum `$FFFFFFFF` |
+| Namespace | Independent from regular variables — `$FA` and variable `a` do not conflict |
+| Scope     | Global — defined anywhere, visible everywhere |
+| Lifetime  | NOT released when function exits; survives across threads, callbacks, and timers |
+
+**Typical use cases:**
+
+```c
+// Store handles that need to survive across scopes
+$FWD  = ui.open(640, 480, "Test Window");   // window handle
+$FCOM = uart.open("COM3", 115200);          // serial port handle
+
+// Use directly in other functions or callbacks
+def draw() {
+    ui.push($FWD, frame, 0, 0);              // no need to pass as parameter
+}
+
+// Also works in timer callbacks
+def tick(a) {
+    data = uart.recv($FCOM);
+    if len(data) > 0 { trace("Received:", data); }
+}
+```
+
+> **Vs. regular variables**: Regular local variables are released when their function exits; `$F` tag parameters persist. For long-lived resources like window handles, connections, and canvases that must be shared across functions/callbacks/timers, prefer `$F` over local variables.
+
+### 5. Parameter Subscript Notation `[..]`
 
 `[..]` is used to index or slice a parameter — the core subscript syntax in Y Language's parameter system:
 
@@ -410,16 +443,19 @@ d = max(x,y) + min(a,b); // One segment: both () first, then +, then =
 
 ## Appendix A: Operator Precedence (High → Low)
 
-| Priority | Operators                                          | Associativity |
-| -------- | -------------------------------------------------- | ------------- |
-| 1        | `[]` `()` subscript and parentheses               | Left → Right  |
-| 2        | `*` `/` `%` `.*` `./`                             | Left → Right  |
-| 3        | `+` `-`                                            | Left → Right  |
-| 4        | `>` `>=` `<` `<=` `==`                             | Left → Right  |
-| 5        | `&&` `||`                                          | Left → Right  |
-| 6        | `|>` pipe                                          | Left → Right  |
-| 6        | Type-I function                                    | Right → Left  |
-| 7        | `=` `+=` `-=` `*=` `/=` `&=` `|=` `^=` `%=`       | Right → Left  |
+| Priority | Operators                                                      | Associativity |
+| -------- | -------------------------------------------------------------- | ------------- |
+| 1        | `[]` `()` subscript and parentheses                           | Left → Right  |
+| 2        | `++` `--`                                                     | Left → Right  |
+| 3        | `|>` pipe                                                      | Left → Right  |
+| 3        | Type-I function                                                | Right → Left  |
+| 4        | `*` `/` `%` `.*` `./`                                        | Left → Right  |
+| 5        | `+` `-`                                                        | Left → Right  |
+| 6        | `<<` `>>`                                                      | Left → Right  |
+| 7        | `&` `|` `^`                                                    | Left → Right  |
+| 8        | `>` `>=` `<` `<=` `==` `!=`                                   | Left → Right  |
+| 9        | `!` `&&` `||`                                                 | Left → Right  |
+| 10       | `=` `+=` `-=` `*=` `/=` `&=` `|=` `^=` `%=` `<<=` `>>=`      | Right → Left  |
 
 ## Appendix B: Data Types Summary
 

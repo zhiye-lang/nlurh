@@ -67,7 +67,46 @@ buf sys.pack(format, data...) // pack(">h",14) -> ' 00 0E'
 
 
 
-#### 1.5: Range Data Generation (range)
+#### 1.5: Data Truncation (offset)
+
+| Interface | offset               | Extract a substring/sub-buffer at a given position and length      |
+| --------- | -------------------- | ------------------------------------------------------------------ |
+| Parameter | str/buf              | Source data (string or buffer)                                     |
+| Parameter | start                | Start position (0-based)                                           |
+| Parameter | len/null             | Length to extract; if empty, extracts to the end                   |
+| Returns   | str/buf              | Returns extracted data, same type as input                         |
+
+```c
+str/buf offset(str/buf, start, len/null)
+// offset("abcdefg", 2, 3)    → "cde"
+// offset("abcdefg", 2)       → "cdefg"    (len empty → to the end)
+// offset(buf, 4, 8)          → 8 bytes from buf starting at byte 4
+```
+
+> **Vs. takat**: `takat` extracts from structured composite data (collections/ranges/modified parameters); `offset` does byte-level slicing on raw str/buf. The former destructures structured data, the latter slices raw binary.
+
+
+#### 1.6: Base64 Encode/Decode (b64e/b64d)
+
+| Interface | b64e                  | Encode binary data to Base64 string                         |
+| --------- | --------------------- | ----------------------------------------------------------- |
+| Param     | data(buf)             | Binary data                                                 |
+| Return    | str                   | Base64 encoded string                                       |
+
+| Interface | b64d                  | Decode Base64 string to binary data                         |
+| --------- | --------------------- | ----------------------------------------------------------- |
+| Param     | base64_str            | Base64 encoded string                                       |
+| Return    | buf                   | Decoded binary data                                         |
+
+```c
+str  b64e(buf)
+buf  b64d(str)
+// a = b64e(inf("img.png"))       → Base64 encoded string
+// b = b64d(a)                     → original binary data
+// b64e('112233')                  → "ESIz"
+// b64d("ESIz")                    → ' 11 22 33'
+```
+#### 1.7: Range Data Generation (range)
 
 | Interface | range | Generate buf data from range parameters            |
 | --------- | ----- | -------------------------------------------------- |
@@ -91,9 +130,9 @@ buf range(rng, bits)
 */
 ```
 
+`takat` — an aptly named function: "take at", meaning take + position — phonetically, semantically, and graphemically intuitive.
 
-
-#### 1.6: Indexed Value Extraction (takat)
+#### 1.8: Indexed Value Extraction (takat)
 
 | Interface | takat       | Extract pure values from modified content                    |
 | --------- | ----------- | ------------------------------------------------------------ |
@@ -115,7 +154,7 @@ buf range(rng, bits)
 
 
 
-#### 1.7: Formatted Output (printf)
+#### 1.9: Formatted Output (printf)
 
 | Interface | printf   | Formatted output to file or console |
 | --------- | -------- | ----------------------------------- |
@@ -129,7 +168,7 @@ str printf(format, args...) // printf("Value: %d", 123) -> "Value: 123"
 
 
 
-#### 1.8: Get Milliseconds (getms)
+#### 1.10: Get Milliseconds (getms)
 
 | Interface | getms | Get system millisecond count |
 | --------- | ----- | ---------------------------- |
@@ -142,7 +181,7 @@ int getms() // ms = getms()
 
 
 
-#### 1.9: Get Time (time)
+#### 1.11: Get Time (time)
 
 | Interface | time     | Get current time (Unix timestamp)                            |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -155,7 +194,7 @@ int time(ntp_server) // timestamp = time(); Get Unix time from local clock; time
 
 
 
-#### 1.10: Time Conversion (mktime)
+#### 1.12: Time Conversion (mktime)
 
 | Interface | mktime   | Convert time string to timestamp                    |
 | --------- | -------- | --------------------------------------------------- |
@@ -168,7 +207,7 @@ int mktime(str_time) // timestamp = mktime("2025-10-14 01:02:51")
 
 
 
-#### 1.11: Local Time (localtime)
+#### 1.13: Local Time (localtime)
 
 | Interface | localtime | Convert timestamp to local time (inverse of mktime) |
 | --------- | --------- | --------------------------------------------------- |
@@ -181,7 +220,7 @@ str_time localtime(timestamp) // str_time = localtime(ts)
 
 
 
-#### 1.12: Sleep (sleep)
+#### 1.14: Sleep (sleep)
 
 | Interface | sleep   | Put current thread to sleep for specified duration |
 | --------- | ------- | -------------------------------------------------- |
@@ -194,7 +233,7 @@ void sleep(s) // sleep(0.01) // Sleep for 10ms
 
 
 
-#### 1.13: Get Environment Variable (getenv)
+#### 1.15: Get Environment Variable (getenv)
 
 | Interface | getenv   | Get environment variable value                               |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -207,7 +246,7 @@ str getenv("PATH") // path = getenv("PATH")
 
 
 
-#### 1.14: Get Current Directory (getdir)
+#### 1.16: Get Current Directory (getdir)
 
 | Interface | getdir | Get current working directory  |
 | --------- | ------ | ------------------------------ |
@@ -220,30 +259,7 @@ str getdir() // current_dir = getdir()
 
 
 
-#### 1.15: Clear Element (clean)
-
-| Interface | clean | Clear an element          |
-| --------- | ----- | ------------------------- |
-| Param     | name  | Element name              |
-| Return    | void  | Nothing                   |
-
-```c
-void clean(name) 
-/*
--> da="hellow"
-<- da
--> out da
-<- str[18]"[da]str[6]"hellow""
--> clean da
-<-
--> out da
-<- str[4]"[da]"
-*/
-```
-
-
-
-#### 1.16: Debug Output (trace)
+#### 1.17: Debug Output (trace)
 
 | Interface | trace              | Output debug info to console (always to console in any run mode) |
 | --------- | ------------------ | -------------------------------------------------------- |
@@ -268,7 +284,7 @@ trace(name,...) // ab = 20; trace(ab) / trace ab -> [ab]num:20  // Output to deb
 
 
 
-#### 1.17: Output Result (out)
+#### 1.18: Output Result (out)
 
 | Interface | out                | Return results upstream to the call chain (console mode outputs to console; UI window mode outputs to window) |
 | --------- | ------------------ | ------------------------------------------------- |
@@ -283,7 +299,7 @@ str out(name,...) // Returns processed result as a string to the caller
 
 
 
-#### 1.18: Output to File (outf)
+#### 1.19: Output to File (outf)
 
 | Interface | outf     | Output data to file                                          |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -297,20 +313,25 @@ int outf(filename, data) // outf("data.bin", ' 11 22 33') -> 3 (Write 3 hex byte
 
 
 
-#### 1.19: Read from File (inf)
+#### 1.20: Read from File (inf)
 
-| Interface | inf      | Read data from file   |
-| --------- | -------- | --------------------- |
-| Param     | filename | File name             |
-| Return    | data     | Returns file contents |
+| Interface | inf      | Read data from file                                           |
+| --------- | -------- | ------------------------------------------------------------ |
+| Param     | filename | File name                                                   |
+| Param     | flag/null| Read mode: omit/null = string mode; any value (e.g. 1) = binary mode |
+| Return    | str/buf  | String mode returns str, binary mode returns buf             |
 
 ```c
-data inf("file.txt") // content = inf("config.ini")
+str inf(filename)          // text mode (default)
+buf inf(filename, 1)       // binary mode
+// text = inf("config.ini")           → string
+// bin  = inf("img.png", 1)           → binary buffer
+// base64_str = b64e(inf("img.png", 1))  → binary read + base64 encode
 ```
 
 
 
-#### 1.20: Set Function Priority (setfunc)
+#### 1.21: Set Function Priority (setfunc)
 
 | Interface | setfunc   | Adjust function execution priority |
 | --------- | --------- | ---------------------------------- |
@@ -324,30 +345,101 @@ bool setfunc("callback", 1) // setfunc("outf", 2)
 
 
 
-#### 1.21: Get System Node (getnode)
+#### 1.22: Get System Node (getnode)
 
-| Interface | getnode | Get platform internal node (parameter/function) by name for remote invocation and script reflection |
-| --------- | ------- | ------------------------------------------------------------ |
-| Param     | name    | Node name string                                             |
-| Return    | node    | Returns node handle; returns `false` if not found            |
+| Interface | getnode  | Get platform internal node (parameter/function/TAG) by name or TAG index          |
+| --------- | -------- | ------------------------------------------------------------ |
+| Param     | name/TAG | String node name (e.g. `"time"`, `"str"`) or numeric TAG label (`0xF` prefix, e.g. `0xFA123467`, `0xF1A`) |
+| Return    | node     | Returns node handle; returns `false` if not found            |
+
+- String input: look up regular variables, functions, and parameters by name
+- `0xF` numeric input: look up TAG label nodes by hex index (e.g. `getnode(0xFA123467)` is equivalent to `$FA123467`)
+- Return value can be called as a function `node(args)`, or assigned to variables
 
 ```c
-node getnode(name)
-// getnode("time") -> Get the time function node
-// getnode("time")(); -> Execute the platform time() function.
+node getnode(name/TAG)
+// getnode("time")       → get the time function node
+// getnode("time")();    → execute the platform time() function
+// getnode(0xFA123467)   → get the node for tag $FA123467
+
+// Dynamic node names — ideal for loops or config-driven scenarios
+func_name = "max";
+getnode(func_name)(7, 5);     // equivalent to max(7,5), returns 7
+
+// Dynamic TAG labels — access tags by numeric index
+for (i=0; i<3; i++) {
+    tag = 0xF1000 + i;          // construct TAG index
+    node = getnode(tag);        // retrieve $F1000, $F1001, $F1002
+    trace(i, node);
+}
 /*
-JSON data: jsonbuf='"{"run":"max", "data":7}"'  // '"..."' nested quotes can contain any character
-Y-language execution:
+JSON data: jsonbuf='"{"run":"max", "data":7}"'  // '"..."' can contain any characters
 fd = json.load(jsonbuf);
-getnode(json.get(fd,"run"))(json.get(fd,"data"),5); // Use getnode(json.get(fd,"name")) to get the function node, then (json.get(fd,"data"),5) to call with concatenated parameters.
-json.free(fd); // Release the json fd handle
-Explanation: Call the platform max function to compare the data value with 5; obviously returns 7.
+getnode(json.get(fd,"run"))(json.get(fd,"data"),5);
+json.free(fd);
+// Calls platform max() to compare data with 5, obviously returns 7.
 */
 ```
+#### 1.23: Create or Get Node (setnode)
 
+| Interface | setnode  | Get platform node, create it automatically if it doesn't exist                      |
+| --------- | -------- | ------------------------------------------------------------ |
+| Param     | name/TAG | String node name or `0xF` numeric TAG label                  |
+| Return    | node     | Returns node handle (existing if present, newly created otherwise) |
 
+- The only difference from `getnode`: never returns `false` — auto-creates an empty node if missing
+- Ideal for: dynamically generating parameter names or TAG labels inside loops, without pre-declaration
 
-#### 1.22: Run Script (runsc)
+```c
+node setnode(name/TAG)
+// setnode("filename")   → create 'filename' if missing, return existing otherwise
+// setnode(0xF2000)      → create $F2000 if missing, return existing otherwise
+
+// Dynamically create parameters in a loop
+for (i=0; i<10; i++) {
+    name = printf("item%d", i);           // compose parameter names: "item0", "item1", ...
+    setnode(name) = i * 10;       // create if missing and assign
+    trace(name);              // verify: item0, item1, ... == 0, 1, ...
+}
+trace(item0); // item0 is invalid here — it is a local variable in the for loop and released after exit
+
+// Dynamically allocate TAG labels in a loop
+for (i=0; i<5; i++) {
+    setnode(0xF2000 + i) = inf("file" + i);  // $F2000~$F2004 auto-created and assigned
+}
+```
+#### 1.24: Clear Node (clrnode)
+
+| Interface | clrnode | Clear node content (keeps the node itself)                     |
+| --------- | ------- | ------------------------------------------------------------ |
+| Param     | name/TAG | String node name or `0xF` numeric TAG label                  |
+| Return    | void    | Nothing                                                      |
+
+Same parameter format as `setnode`. Clears the node content to empty while keeping the node alive.
+
+```c
+void clrnode(name/TAG)
+// clrnode("da")        → clear the content of da
+// clrnode(0xFA123467)  → clear the content of $FA123467
+// setnode("tmp") = 100;  // create and assign
+// clrnode("tmp");        // tmp still exists but is empty, can be reassigned
+```
+#### 1.25: Delete Node (delnode)
+
+| Interface | delnode  | Delete node from the environment                              |
+| --------- | -------- | ------------------------------------------------------------ |
+| Param     | name/TAG | String node name or `0xF` numeric TAG label                  |
+| Return    | bool     | Success: `true`, Failure: `false`                             |
+
+Same parameter format as `setnode`. Completely removes the node (parameters, TAG labels, function bindings, etc.).
+
+```c
+bool delnode(name/TAG)
+// delnode("tmp")       → delete regular variable tmp
+// delnode(0xF2000)     → delete TAG label $F2000
+// setnode("tmp") = 100; delnode("tmp");  // tmp no longer exists
+```
+#### 1.26: Run Script (runsc)
 
 | Interface | runsc  | Run specified script data       |
 | --------- | ------ | ------------------------------- |
@@ -360,20 +452,21 @@ result runsc{script} // runc{1+2*3} -> {int:7 }
 
 
 
-#### 1.23: Run String Code (runstr)
+#### 1.27: Run String Code (runstr)
 
-| Interface | runstr  | Run code from a string   |
-| --------- | ------- | ------------------------ |
-| Param     | strcode | Code string(utf-8)       |
-| Return    | result  | Returns execution result |
+| Interface | runstr            | Execute a Y language code string                             |
+| --------- | ----------------- | ------------------------------------------------------------ |
+| Param     | code              | Code string to execute                                        |
+| Param     | flag/null         | Optional flag: any value present → return string result; omitted → return raw node |
+| Return    | str/node          | With flag returns string, otherwise returns raw result node   |
 
 ```c
-result runstr(strcode) // runstr("print(\"hello\")") -> ( str[5]"hello" )  or runstr(inf("code.c")) executes code from code.c
+node runstr(code)                   // original, returns result node
+str  runstr(code, 1)                // returns string result
+// runstr("a = 1+2");               → returns node 3
+// runstr("inf('test.txt')", 1);    → returns ":str[5]="hello""
 ```
-
-
-
-#### 1.24: JSON Processing (jsonvm)
+#### 1.28: JSON Processing (jsonvm)
 
 | Interface | jsonvm      | Process JSON data (supports internal script execution) |
 | --------- | ----------- | ------------------------------------------------------ |
@@ -386,7 +479,7 @@ fd jsonvm(json_script) // aa ="hellow";bb="123";jsonvm{"key":aa+bb} -> str[19]"{
 
 
 
-#### 1.25: User Input (input)
+#### 1.29: User Input (input)
 
 | Interface | input  | Get user input     |
 | --------- | ------ | ------------------ |
@@ -399,7 +492,7 @@ str input("Enter name: ") // name = sys.input("Your name: ")
 
 
 
-#### 1.26: Load Library (loadlib)
+#### 1.30: Load Library (loadlib)
 
 | Interface | loadlib | Dynamically load a library file |
 | --------- | ------- | ------------------------------- |
@@ -412,7 +505,7 @@ bool loadlib("mylib.dll") // loadlib("test.dll")
 
 
 
-#### 1.27: Unload Library (unload)
+#### 1.31: Unload Library (unload)
 
 | Interface | unload  | Unload a loaded library                      |
 | --------- | ------- | -------------------------------------------- |
@@ -425,7 +518,7 @@ bool unload(handle) // unload("test")
 
 
 
-#### 1.28: Create Thread
+#### 1.32: Create Thread
 
 | Interface | createth   | Allocate CPU and memory resources from the system to independently execute a Y-language code block or invoke a specified function via callback |
 | --------- | ---------- | ------------------------------------------------------------ |
@@ -455,7 +548,7 @@ for(i=0; i<10; i++) {
 
 
 
-#### 1.29: Kill Thread
+#### 1.33: Kill Thread
 
 | Interface | killth | Find the thread by handle and terminate it (Note: killth may have resource release issues; it's best for Ycode to end on its own) |
 | --------- | ------ | ------------------------------------------------------------ |
@@ -468,24 +561,59 @@ bool killth(fd) // fh=createth({...}); ...... killth(fh)
 
 
 
-#### 1.30: Create Timer
+#### 1.34: Create Timer
 
-| Interface | starttimer         | Create a scheduled task to run a Y-language code block at a specified time |
+| Interface | starttimer         | Create a scheduled task to run a Y-language code block or callback a specified function |
 | --------- | ------------------ | ------------------------------------------------------------ |
-| Param     | Ycode              | Y-language code block enclosed in {}                         |
+| Param     | Ycode/func         | Y-language code block enclosed in {} or function name         |
+| Param     | null/args          | Function parameters (present when first param is a function name); frozen-copied at creation, e.g. `(fd)` or `(a, b, c)` |
 | Param     | starttimeS         | Start time (in seconds), supports decimals (e.g. 0.2 = 200ms) |
 | Param     | IntervaltimeS/null | Interval time (in seconds), supports decimals (e.g. 0.01 = 10ms); omit for one-time execution |
 | Return    | fd                 | Returns timer handle on success; returns false on failure    |
 
+Two calling modes are supported:
+
+**Mode 1: Code Block Mode**
 ```c
-fd starttimer(Ycode,starttimeS,IntervaltimeS/null) 
-// ft=starttimer({out(11)},5);  // Execute {out(11)} after 5 seconds; the code block prints 11 to the window.
-// a=1; ft=starttimer({out(a);a++;},2,0.5);  // Execute {out(a);a++;} after 2 seconds, then repeat every 0.5s; prints the value of a, then increments a by 1.
+fd starttimer(Ycode, starttimeS, IntervaltimeS/null) 
+// fd=starttimer({trace(11)},5);  // Execute {trace(11)} after 5 seconds; the code block prints 11 to the debug console.
+// a=1; fd=starttimer({trace(a);a++;if(a>15) stoptimer(fd);},2,0.5);  // After 2 seconds execute {...}, then repeat every 0.5s; prints the value of a to the debug console, then increments a. When a>15, the timer stops itself.
 ```
 
+**Mode 2: Function Callback Mode (parameters frozen at creation)**
+
+```c
+fd starttimer(func, (args), starttimeS, IntervaltimeS/null)
+// fd=starttimer(tick, (100,100), 1, 1);     // If tick is a Y function: parameters are loaded once, then the timer drives function body execution.
+// fd=starttimer(trace, (fd,"error"), 1, 1);  // If log is C/C++: parameters are locked once, then the timer triggers: log(fd, "error"), fires only once.
+    
+def tick(a,b) {a++;b--;trace(a, b);}
+```
+
+**Parameter Binding Behavior (Y Function vs C/C++ Function)**
+
+| Callback Type | Entry Parameters | Function-Body Local Variables |
+|---------------|------------------|-------------------------------|
+| Y Function    | **Bound once, changes persist between calls** | **Redefined every call, not preserved** |
+| C/C++ Function | **Re-bound on every trigger** | **Redefined every call** |
+
+Example — entry parameter persistence vs. local variable reset:
+```y
+def tick(a) {
+    a++;                // Entry param a: first call 100→101, next 101→102...  preserved
+    def b = 0;          // Local var b: re-defined every callback, always starts from 0
+    b++;
+    trace(a, b);
+}
+starttimer(tick, (100), 1, 1);
+// Output: 101 1, 102 1, 103 1,...  // a grows, b resets every time
+```
+
+> **Design Rationale**: Y-language parameters are fundamentally "meta" nodes managed by the platform. They are bound once when the timer is created, and all reads/writes within the function body operate on the same node — naturally persistent. C/C++ functions use independent stack frames on every call, so parameters cannot survive across invocations. When you need "C/C++ computation power + parameter persistence", wrap the C/C++ call inside a Y function and let the state live at the Y layer.
 
 
-#### 1.31: Stop Timer
+
+#### 1.35: Stop Timer
 
 | Interface | stoptimer | Find the timer by handle and stop it              |
 | --------- | --------- | ------------------------------------------------- |
@@ -498,7 +626,7 @@ bool stoptimer(fd) // ft=starttimer({...},...); ...... stoptimer(ft)
 
 
 
-#### 1.32: URL Parse (urlparse)
+#### 1.36: URL Parse (urlparse)
 
 | Interface | urlparse         | Parse a URL string           |
 | --------- | ---------------- | ---------------------------- |
@@ -511,7 +639,7 @@ parsed urlparse(url) // urlparse("https://www.example.com") -> "www.example.com"
 
 
 
-#### 1.33: Network Connect (connect)
+#### 1.37: Network Connect (connect)
 
 | Interface | connect | Establish a network connection |
 | --------- | ------- | ------------------------------ |
@@ -529,7 +657,7 @@ sock connect(host, port, type)
 
 
 
-#### 1.34: Send Data (send)
+#### 1.38: Send Data (send)
 
 | Interface | send   | Send data over network       |
 | --------- | ------ | ---------------------------- |
@@ -543,7 +671,7 @@ int send(sock, buffer) // sent = send(connection, sedata)
 
 
 
-#### 1.35: Receive Data (recv)
+#### 1.39: Receive Data (recv)
 
 | Interface | recv     | Receive data from network    |
 | --------- | -------- | ---------------------------- |
@@ -557,7 +685,7 @@ data recv(sock, timeoutS) // redata = recv(fd, 20)
 
 
 
-#### 1.36: Disconnect (disconnect)
+#### 1.40: Disconnect (disconnect)
 
 | Interface | disconnect | Disconnect network connection |
 | --------- | ---------- | ----------------------------- |
@@ -570,7 +698,30 @@ bool disconnect(sock) // disconnect(fd)
 
 
 
-#### 1.37: Execute System Command (cmd)
+#### 1.41: Interaction Window Rounds (focusRound / sendRound)
+
+| Interface | focusRound     | No params, no return. Execute once in the current round to record it in the environment |
+| --------- | -------------- | ------------------------------------------------------------ |
+| Param     | —              | —                                                            |
+| Return    | void           | —                                                            |
+
+| Interface | sendRound      | Send a message to the round recorded by focusRound (used by threads/timers created in that round) |
+| --------- | -------------- | ------------------------------------------------------------ |
+| Param     | msg            | Message to send                                              |
+| Return    | bool           | `true` on success                                            |
+
+For interaction window callbacks: `focusRound()` (no params) records the current round. Threads or timers created during this round can later call `sendRound(msg)` to route messages back to the recorded round — even after many subsequent interactions, messages always arrive at the originally recorded round.
+
+```c
+// During round 3
+focusRound();                               // Record: this is round 3
+createth:
+    // Thread waits for events in background...
+    sendRound("File download complete");    // Message appears in round 3's conversation
+// Round 4... Round 5...                   // Main conversation moves forward
+// sendRound in thread always delivers to round 3 ← unaffected by later rounds
+```
+#### 1.42: Execute System Command (cmd)
 
 | Interface | `cmd`         | Invoke Windows command line to execute a system command, capture stdout+stderr |
 | --------- | ------------- | ------------------------------------------------------------------------------ |

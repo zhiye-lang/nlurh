@@ -37,9 +37,66 @@ Y-Language Interface Specification (Array names `"str"` and `"json"`: use the `o
 buf str.betweenb(inbuf, tag, tagEnd/len, max/null) // outbuf = str.betweenb(inf"test.txt", "第", "\r\n", 5000);
 ```
 
+##### 1.2: Content Extraction (betweens)
+
+| Interface | `str.betweens`   | Splits content into inside/outside markers                    |
+| --------- | ---------------- | -------------------------------------------------------------- |
+| Parameter | `Inbuf`          | Input data                                                     |
+| Parameter | `tagSta`         | Start marker                                                   |
+| Parameter | `tagEnd`         | End marker                                                     |
+| Parameter | `out/null`       | Optional output: receives content outside the markers           |
+| Returns   | `str`            | Returns content between markers (first match)                   |
+
+```c
+str str.betweens(inbuf, tagSta, tagEnd, out/null)
+// code = str.betweens(response, "```y", "```", text);
+//   code → Y code between markers (for execution)
+//   text → display text outside markers (for the user)
+```
+
+> **Vs. betweenb**: `betweens` returns only the first match (single); `betweenb` retrieves all matches in batch.
 
 
-##### 1.2: Batch Content Replacement (replace)
+##### 1.3: String Separator (separate_open / separate_next / separate_close)
+
+An iterator-style API for splitting data by markers — ideal for responses containing multiple code blocks.
+
+| Interface | `separate_open`  | Create a separator handle, splitting data by markers           |
+| --------- | ---------------- | -------------------------------------------------------------- |
+| Parameter | `data`           | Input data                                                     |
+| Parameter | `tagSta`         | Start marker                                                   |
+| Parameter | `tagEnd`         | End marker                                                     |
+| Returns   | `fd`             | Separator handle; `false` on failure                           |
+
+| Interface | `separate_next`  | Fetch the next separated segment                               |
+| --------- | ---------------- | -------------------------------------------------------------- |
+| Parameter | `fd`             | Separator handle                                               |
+| Parameter | `inner/null`     | Optional output: receives content between markers; null = outer text only |
+| Returns   | `outer`          | Returns the next outer (non-code) segment; `false` when done   |
+
+| Interface | `separate_close` | Close the separator                                            |
+| --------- | ---------------- | -------------------------------------------------------------- |
+| Parameter | `fd`             | Separator handle                                               |
+| Returns   | `bool`           | `true` on success                                              |
+
+```c
+fd = str.separate_open(data, "```y", "```");
+
+// Iterate all segments
+while (outer = str.separate_next(fd, inner)) {
+    trace("Outer text:", outer);        // text outside code blocks
+    if (inner != false) {
+        result = runstr(inner);         // execute code block
+        agent.feedback(result);
+    }
+}
+str.separate_close(fd);
+```
+
+> **Vs. betweens**: `betweens` returns only the first match (single-shot); the separator is designed for responses with **multiple** code blocks, iterating them one by one.
+
+
+##### 1.4: Batch Content Replacement (replace)
 
 | Interface | `str.replace`    | Batch-replaces specified content                              |
 | --------- | ---------------- | ------------------------------------------------------------- |
@@ -54,7 +111,7 @@ buf str.replace(Data, sourc, replace/NULL) // outbuf = str.replace(inf"test.txt"
 
 
 
-##### 1.3: Array Code Output (outc)
+##### 1.5: Array Code Output (outc)
 
 | Interface | `str.outc`    | Outputs array data as C code, appended to `const_cdata.c`    |
 | --------- | ------------- | ------------------------------------------------------------- |
@@ -68,7 +125,7 @@ bool str.outc(name, data...) // str.outc("data", buf)
 
 
 
-##### 1.4: File Search (find)
+##### 1.6: File Search (find)
 
 | Interface | `str.find`      | Searches for files of specified types starting from a given directory (recursively) |
 | --------- | --------------- | ----------------------------------------------------------------------------------- |
@@ -83,7 +140,7 @@ sub str.find(path, type, subflag/null) // str.find("path", "*.c;*.h");  // all .
 
 
 
-##### 1.5: File Encoding Conversion (convert)
+##### 1.7: File Encoding Conversion (convert)
 
 | Interface | `str.convert` | Converts the encoding of specified files (checks current encoding first; converts only if different from the target, then overwrites the source file) |
 | --------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |

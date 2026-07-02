@@ -45,19 +45,11 @@ nlurh/           -- Project root (Zhiye.Unity)
 │   ├── Ycode.c         # Y Language runtime code
 │   └── 支叶.cmd        # Zhiye bootstrap script
 ├── docs/               -- Development documentation
-│   ├── dll/            # Component library development docs (corresponds to dll folder)
+│   ├── dll/            # Component library usage guides (corresponds to nlu_run_??bit/dll folder)
 │   ├── ZhiyeYl.md    # Y Language basic introduction
 │   └── ZhiyeInterfaces.md   # Zhiye Unity platform interface documentation
 └── examples/           -- Sample code projects
-    └── dll_nlu3/       # Third-party interface development example
-        ├── gRunsdk32.lib    # 32-bit SDK import library (for linking at compile time)
-        ├── gRunsdk64.lib    # 64-bit SDK import library (for linking at compile time)
-        ├── ThirdBasics.h    # Zhiye third-party access basic interface header (defines interface functions/data structures)
-	├── sz_api_ext.h/cpp   # Zhiye third-party Basic SDK Encapsulation
-        ├── ThirdFunc.cpp    # Zhiye third-party access C++ sample code
-        ├── ThirdLib.vcxproj # VS project configuration (platform toolset)
-        ├── ThirdLib.sln     # VS solution file (SDK V141: compatible with V141 and above VS SDK)
-        └── README.md        # Build guide and example instructions
+    └── dll_nlu3       # Third-party C/C++ extension development example (for detailed structure see: examples/dll_nlu3/README.md)
 ```
 
 ### Main Executable Name

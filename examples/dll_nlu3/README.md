@@ -9,6 +9,20 @@
 
 # Zhiye-Y Language: Third-Party Function Integration (C/C++ Dynamic Library Method)
 
+#### Project Directory Structure
+
+```lua
+dll_nlu3/           -- Third-party extension development example
+└── ThirdLib/       # Third-party interface development example
+│   ├── gRunsdk32.lib    # 32-bit SDK import library (for linking at compile time)
+│   ├── gRunsdk64.lib    # 64-bit SDK import library (for linking at compile time)
+│   ├── ThirdBasics.h    # Zhiye third-party access basic interface header (defines interface functions/data structures)
+│   ├── ThirdFunc.cpp    # Zhiye third-party access C++ sample code
+│   └── ThirdLib.vcxproj # VS project configuration (platform toolset)
+├── ThirdLib.sln     # VS solution file (SDK V141: compatible with V141 and above VS SDK)
+└── README.md        # Build guide and example instructions
+```
+
 #### Library Compilation (Windows) Instructions
 1. First, install the VS compilation environment on your computer (the example was created with VS2017).
 2. Double-click to open `ThirdLib.sln` (the VS project file).
