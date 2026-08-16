@@ -86,7 +86,21 @@ str/buf offset(str/buf, start, len/null)
 > **Vs. takat**: `takat` extracts from structured composite data (collections/ranges/modified parameters); `offset` does byte-level slicing on raw str/buf. The former destructures structured data, the latter slices raw binary.
 
 
-#### 1.6: Base64 Encode/Decode (b64e/b64d)
+#### 1.6: Line Slice (lline)
+| Interface | lline                | Slice text by line number (for reading code, logs, etc.)     |
+| --------- | -------------------- | -------------------------------------------------- |
+| Param     | data                 | Source text (str)                                     |
+| Param     | start                | Starting line number (1-based)                        |
+| Param     | count/null           | How many lines to return; null = to end               |
+| Return    | str                  | The sliced lines                                      |
+
+```c
+str lline(str, start, count/null)
+// lline(code, 42)          → full text of line 42
+// lline(code, 42, 5)       → lines 42~46 (5 lines total)
+// lline(code, 1)           → from line 1 to end (entire file)
+```
+#### 1.7: Base64 Encode/Decode (b64e/b64d)
 
 | Interface | b64e                  | Encode binary data to Base64 string                         |
 | --------- | --------------------- | ----------------------------------------------------------- |
@@ -106,7 +120,7 @@ buf  b64d(str)
 // b64e('112233')                  → "ESIz"
 // b64d("ESIz")                    → ' 11 22 33'
 ```
-#### 1.7: Range Data Generation (range)
+#### 1.8: Range Data Generation (range)
 
 | Interface | range | Generate buf data from range parameters            |
 | --------- | ----- | -------------------------------------------------- |
@@ -132,7 +146,7 @@ buf range(rng, bits)
 
 `takat` — an aptly named function: "take at", meaning take + position — phonetically, semantically, and graphemically intuitive.
 
-#### 1.8: Indexed Value Extraction (takat)
+#### 1.9: Indexed Value Extraction (takat)
 
 | Interface | takat       | Extract pure values from modified content                    |
 | --------- | ----------- | ------------------------------------------------------------ |
@@ -154,21 +168,37 @@ buf range(rng, bits)
 
 
 
-#### 1.9: Formatted Output (printf)
+#### 1.10: Format String (sprintf)
 
-| Interface | printf   | Formatted output to file or console |
-| --------- | -------- | ----------------------------------- |
-| Param     | format   | Format string                       |
-| Param     | args,... | Parameter list                      |
-| Return    | str      | Returns the output string           |
+| Interface | sprintf  | Format args into a string, return to variable (no output) |
+| --------- | -------- | -------------------------------------------------------- |
+| Param     | format   | Format string                                             |
+| Param     | args,... | Parameter list                                            |
+| Return    | str      | Returns the formatted string                              |
 
 ```c
-str printf(format, args...) // printf("Value: %d", 123) -> "Value: 123"
+str sprintf(format, args...) // a=sprintf("Value: %d", 123) → a="Value: 123"
+```
+
+> **sprintf vs printf**: `sprintf` returns the formatted string for variable assignment. `printf` is for debug output, appended after the `┄┄ printf ┄┄` marker in feedback.
+
+
+
+#### 1.11: Debug Output (printf)
+
+| Interface | printf   | Formatted output to platform debug channel (after ┄┄ printf ┄┄) |
+| --------- | -------- | -------------------------------------------------------------- |
+| Param     | format   | Format string                                                   |
+| Param     | args,... | Parameter list                                                  |
+| Return    | none     | Content appended to end of feedback                              |
+
+```c
+printf(format, args...) // printf("Current: %d", 123) → feedback shows: ┄┄ printf ┄┄\nCurrent: 123
 ```
 
 
 
-#### 1.10: Get Milliseconds (getms)
+#### 1.11: Get Milliseconds (getms)
 
 | Interface | getms | Get system millisecond count |
 | --------- | ----- | ---------------------------- |
@@ -181,7 +211,7 @@ int getms() // ms = getms()
 
 
 
-#### 1.11: Get Time (time)
+#### 1.12: Get Time (time)
 
 | Interface | time     | Get current time (Unix timestamp)                            |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -194,7 +224,7 @@ int time(ntp_server) // timestamp = time(); Get Unix time from local clock; time
 
 
 
-#### 1.12: Time Conversion (mktime)
+#### 1.13: Time Conversion (mktime)
 
 | Interface | mktime   | Convert time string to timestamp                    |
 | --------- | -------- | --------------------------------------------------- |
@@ -207,7 +237,7 @@ int mktime(str_time) // timestamp = mktime("2025-10-14 01:02:51")
 
 
 
-#### 1.13: Local Time (localtime)
+#### 1.14: Local Time (localtime)
 
 | Interface | localtime | Convert timestamp to local time (inverse of mktime) |
 | --------- | --------- | --------------------------------------------------- |
@@ -220,7 +250,7 @@ str_time localtime(timestamp) // str_time = localtime(ts)
 
 
 
-#### 1.14: Sleep (sleep)
+#### 1.15: Sleep (sleep)
 
 | Interface | sleep   | Put current thread to sleep for specified duration |
 | --------- | ------- | -------------------------------------------------- |
@@ -233,7 +263,22 @@ void sleep(s) // sleep(0.01) // Sleep for 10ms
 
 
 
-#### 1.15: Get Environment Variable (getenv)
+#### 1.16: Pause (pause)
+
+| Interface | pause  | Pause code execution, wait for continue instruction |
+| -------- | ------ | --------------------------------------------------- |
+| Param    | none   | Pause directly                                      |
+| Param    | msg    | Optional string, output to debug interface on pause |
+| Return   | none   |                                                     |
+
+```c
+void pause()       // pause()   Pause directly
+void pause(msg)    // pause("Confirm to continue")  Pause and print prompt to debug interface
+```
+
+
+
+#### 1.17: Get Environment Variable (getenv)
 
 | Interface | getenv   | Get environment variable value                               |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -246,7 +291,7 @@ str getenv("PATH") // path = getenv("PATH")
 
 
 
-#### 1.16: Get Current Directory (getdir)
+#### 1.17: Get Current Directory (getdir)
 
 | Interface | getdir | Get current working directory  |
 | --------- | ------ | ------------------------------ |
@@ -259,7 +304,7 @@ str getdir() // current_dir = getdir()
 
 
 
-#### 1.17: Debug Output (trace)
+#### 1.18: Debug Output (trace)
 
 | Interface | trace              | Output debug info to console (always to console in any run mode) |
 | --------- | ------------------ | -------------------------------------------------------- |
@@ -284,36 +329,55 @@ trace(name,...) // ab = 20; trace(ab) / trace ab -> [ab]num:20  // Output to deb
 
 
 
-#### 1.18: Output Result (out)
+#### 1.19: System Inspection (inspect)
 
-| Interface | out                | Return results upstream to the call chain (console mode outputs to console; UI window mode outputs to window) |
+| Interface | inspect            | Inspect elements inside nodes/variables/groups (function names, group names, params, tags are all elements) |
 | --------- | ------------------ | ------------------------------------------------- |
-| Param     | variable name/null | Variable name to output; when empty, outputs all current variables |
-| Return    | str                | Returns the result as a string (caller receives it directly) |
+| Param     | name/null          | Element name to inspect; when empty, lists all top-level elements |
+| Param     | name ...           | Multiple names allowed, unlimited count and types   |
+| Return    | str                | Returns inspection result as a string              |
 
 ```c
-str out(name,...) // Returns processed result as a string to the caller
+str inspect(name,...) // Inspect platform element contents
+// inspect()       → list all top-level elements
+// inspect(str)    → str.(betweens, betweenb, find, count, ...)
+// inspect(aa,bb)  → inspect both aa and bb at once
 ```
 
-> **Difference between out and trace**: `out` uses the "result channel" — console mode outputs to console, UI mode outputs to window. `trace` uses the "debug channel" — always outputs to debug console. To inspect variables inside threads, use `trace`; `out`'s return result is not receivable by the caller in asynchronous threads.
+> **Difference between inspect and trace**: `inspect` uses the "result channel" — returns to the caller. `trace` uses the "debug channel" — always outputs to debug console. To check variables inside threads, use `trace`.
 
 
 
-#### 1.19: Output to File (outf)
+#### 1.20: File Check / Delete / Stat (fstat)
+| Interface | fstat              | File existence check / delete / stat                          |
+| --------- | ------------------ | ------------------------------------------------------------ |
+| Param     | path               | File path                                                     |
+| Param     | mode/null          | Operation mode: null=check existence, "del"=delete, "size"=file size |
+| Return    | bool/int           | Check existence returns true/false; delete returns true on success; size returns int bytes |
 
-| Interface | outf     | Output data to file                                          |
+```c
+bool fstat(path)                  // check if file exists
+bool fstat(path, "del")           // delete file
+int  fstat(path, "size")          // file size in bytes
+// fstat("config.txt")            → true   file exists
+// fstat("temp.dat", "del")       → true   deleted successfully
+// fstat("data.bin", "size")      → 2048  2KB
+```
+#### 1.21: Output to File (outf)
+
+| Interface | outf     | Output data to file (append mode)                                          |
 | --------- | -------- | ------------------------------------------------------------ |
 | Param     | filename | File name                                                    |
 | Param     | data     | Data to output                                               |
 | Return    | int/bool | Returns file content length on success; returns false on failure |
 
 ```c
-int outf(filename, data) // outf("data.bin", ' 11 22 33') -> 3 (Write 3 hex bytes to data.bin file)
+int outf(filename, data ...) // outf("data.bin", ' 11 22 33') -> 3 (Append 3 hex bytes to data.bin file)
 ```
 
 
 
-#### 1.20: Read from File (inf)
+#### 1.22: Read from File (inf)
 
 | Interface | inf      | Read data from file                                           |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -331,7 +395,7 @@ buf inf(filename, 1)       // binary mode
 
 
 
-#### 1.21: Set Function Priority (setfunc)
+#### 1.23: Set Function Priority (setfunc)
 
 | Interface | setfunc   | Adjust function execution priority |
 | --------- | --------- | ---------------------------------- |
@@ -345,7 +409,7 @@ bool setfunc("callback", 1) // setfunc("outf", 2)
 
 
 
-#### 1.22: Get System Node (getnode)
+#### 1.24: Get System Node (getnode)
 
 | Interface | getnode  | Get platform internal node (parameter/function/TAG) by name or TAG index          |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -380,7 +444,7 @@ json.free(fd);
 // Calls platform max() to compare data with 5, obviously returns 7.
 */
 ```
-#### 1.23: Create or Get Node (setnode)
+#### 1.25: Create or Get Node (setnode)
 
 | Interface | setnode  | Get platform node, create it automatically if it doesn't exist                      |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -408,7 +472,7 @@ for (i=0; i<5; i++) {
     setnode(0xF2000 + i) = inf("file" + i);  // $F2000~$F2004 auto-created and assigned
 }
 ```
-#### 1.24: Clear Node (clrnode)
+#### 1.26: Clear Node (clrnode)
 
 | Interface | clrnode | Clear node content (keeps the node itself)                     |
 | --------- | ------- | ------------------------------------------------------------ |
@@ -424,7 +488,7 @@ void clrnode(name/TAG)
 // setnode("tmp") = 100;  // create and assign
 // clrnode("tmp");        // tmp still exists but is empty, can be reassigned
 ```
-#### 1.25: Delete Node (delnode)
+#### 1.27: Delete Node (delnode)
 
 | Interface | delnode  | Delete node from the environment                              |
 | --------- | -------- | ------------------------------------------------------------ |
@@ -439,7 +503,7 @@ bool delnode(name/TAG)
 // delnode(0xF2000)     → delete TAG label $F2000
 // setnode("tmp") = 100; delnode("tmp");  // tmp no longer exists
 ```
-#### 1.26: Run Script (runsc)
+#### 1.28: Run Script (runsc)
 
 | Interface | runsc  | Run specified script data       |
 | --------- | ------ | ------------------------------- |
@@ -452,7 +516,7 @@ result runsc{script} // runc{1+2*3} -> {int:7 }
 
 
 
-#### 1.27: Run String Code (runstr)
+#### 1.29: Run String Code (runstr)
 
 | Interface | runstr            | Execute a Y language code string                             |
 | --------- | ----------------- | ------------------------------------------------------------ |
@@ -466,7 +530,7 @@ str  runstr(code, 1)                // returns string result
 // runstr("a = 1+2");               → returns node 3
 // runstr("inf('test.txt')", 1);    → returns ":str[5]="hello""
 ```
-#### 1.28: JSON Processing (jsonvm)
+#### 1.30: JSON Processing (jsonvm)
 
 | Interface | jsonvm      | Process JSON data (supports internal script execution) |
 | --------- | ----------- | ------------------------------------------------------ |
@@ -479,7 +543,7 @@ fd jsonvm(json_script) // aa ="hellow";bb="123";jsonvm{"key":aa+bb} -> str[19]"{
 
 
 
-#### 1.29: User Input (input)
+#### 1.31: User Input (input)
 
 | Interface | input  | Get user input     |
 | --------- | ------ | ------------------ |
@@ -492,7 +556,7 @@ str input("Enter name: ") // name = sys.input("Your name: ")
 
 
 
-#### 1.30: Load Library (loadlib)
+#### 1.32: Load Library (loadlib)
 
 | Interface | loadlib | Dynamically load a library file |
 | --------- | ------- | ------------------------------- |
@@ -505,7 +569,7 @@ bool loadlib("mylib.dll") // loadlib("test.dll")
 
 
 
-#### 1.31: Unload Library (unload)
+#### 1.33: Unload Library (unload)
 
 | Interface | unload  | Unload a loaded library                      |
 | --------- | ------- | -------------------------------------------- |
@@ -518,7 +582,7 @@ bool unload(handle) // unload("test")
 
 
 
-#### 1.32: Create Thread
+#### 1.34: Create Thread
 
 | Interface | createth   | Allocate CPU and memory resources from the system to independently execute a Y-language code block or invoke a specified function via callback |
 | --------- | ---------- | ------------------------------------------------------------ |
@@ -548,7 +612,7 @@ for(i=0; i<10; i++) {
 
 
 
-#### 1.33: Kill Thread
+#### 1.35: Kill Thread
 
 | Interface | killth | Find the thread by handle and terminate it (Note: killth may have resource release issues; it's best for Ycode to end on its own) |
 | --------- | ------ | ------------------------------------------------------------ |
@@ -561,7 +625,7 @@ bool killth(fd) // fh=createth({...}); ...... killth(fh)
 
 
 
-#### 1.34: Create Timer
+#### 1.36: Create Timer
 
 | Interface | starttimer         | Create a scheduled task to run a Y-language code block or callback a specified function |
 | --------- | ------------------ | ------------------------------------------------------------ |
@@ -613,7 +677,7 @@ starttimer(tick, (100), 1, 1);
 
 
 
-#### 1.35: Stop Timer
+#### 1.37: Stop Timer
 
 | Interface | stoptimer | Find the timer by handle and stop it              |
 | --------- | --------- | ------------------------------------------------- |
@@ -626,7 +690,7 @@ bool stoptimer(fd) // ft=starttimer({...},...); ...... stoptimer(ft)
 
 
 
-#### 1.36: URL Parse (urlparse)
+#### 1.38: URL Parse (urlparse)
 
 | Interface | urlparse         | Parse a URL string           |
 | --------- | ---------------- | ---------------------------- |
@@ -639,7 +703,7 @@ parsed urlparse(url) // urlparse("https://www.example.com") -> "www.example.com"
 
 
 
-#### 1.37: Network Connect (connect)
+#### 1.39: Network Connect (connect)
 
 | Interface | connect | Establish a network connection |
 | --------- | ------- | ------------------------------ |
@@ -657,7 +721,7 @@ sock connect(host, port, type)
 
 
 
-#### 1.38: Send Data (send)
+#### 1.40: Send Data (send)
 
 | Interface | send   | Send data over network       |
 | --------- | ------ | ---------------------------- |
@@ -671,7 +735,7 @@ int send(sock, buffer) // sent = send(connection, sedata)
 
 
 
-#### 1.39: Receive Data (recv)
+#### 1.41: Receive Data (recv)
 
 | Interface | recv     | Receive data from network    |
 | --------- | -------- | ---------------------------- |
@@ -685,7 +749,7 @@ data recv(sock, timeoutS) // redata = recv(fd, 20)
 
 
 
-#### 1.40: Disconnect (disconnect)
+#### 1.42: Disconnect (disconnect)
 
 | Interface | disconnect | Disconnect network connection |
 | --------- | ---------- | ----------------------------- |
@@ -698,7 +762,7 @@ bool disconnect(sock) // disconnect(fd)
 
 
 
-#### 1.41: Interaction Window Rounds (focusRound / sendRound)
+#### 1.43: Interaction Window Rounds (focusRound / sendRound)
 
 | Interface | focusRound     | No params, no return. Execute once in the current round to record it in the environment |
 | --------- | -------------- | ------------------------------------------------------------ |
@@ -721,7 +785,7 @@ createth:
 // Round 4... Round 5...                   // Main conversation moves forward
 // sendRound in thread always delivers to round 3 ← unaffected by later rounds
 ```
-#### 1.42: Execute System Command (cmd)
+#### 1.44: Execute System Command (cmd)
 
 | Interface | `cmd`         | Invoke Windows command line to execute a system command, capture stdout+stderr |
 | --------- | ------------- | ------------------------------------------------------------------------------ |

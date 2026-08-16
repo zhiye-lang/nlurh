@@ -12,10 +12,10 @@
 
 Y Language Interface Instructions
 
-#### 1. Basic TTS Operation Interfaces (ArrayName "tts" : Use the command `out tts` to display all subset interfaces.)
+#### 1. Basic TTS Operation Interfaces (ArrayName "tts" : Use the command `inspect tts` to display all subset interfaces.)
 
 ```
----<out tts
+---<inspect tts
 [tts].sub(pay set swav )
 ```
 

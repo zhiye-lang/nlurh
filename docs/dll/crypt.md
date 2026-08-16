@@ -14,10 +14,10 @@ Z-Language Interface Specification
 
 ------
 
-### 1: Basic Interfaces(ArrayName"tls": using the out tls command can display all subset interfaces))
+### 1: Basic Interfaces(ArrayName"tls": using the inspect tls command can display all subset interfaces))
 
 ```jade
----<out tls
+---<inspect tls
 [tls].sub(getasn x509cw x509w x509v gp10 pk_free pk_rsapri pk_rsapub pk_verify pk_sign pk_dec pk_enc pk_outpri pk_outpub pk_inkey pk_get cbcd cbce ecbd ecbe mdc md b64d b64e stb bts rand )
 ```
 

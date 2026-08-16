@@ -14,10 +14,10 @@ Z-Language Interface Specification
 
 
 
-#### 1、Basic operation interface for serial communication (ArrayName "uart" : using the out uart command can display all subset interfaces)
+#### 1、Basic operation interface for serial communication (ArrayName "uart" : using the inspect uart command can display all subset interfaces)
 
 ```jade
----<out uart 
+---<inspect uart 
 [uart].sub(close crecv recv send open scan getapi )
 ```
 

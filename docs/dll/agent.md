@@ -11,10 +11,10 @@
 
 Y-Language Interface Specification
 
-#### 1. AI Agent Basic Interfaces (Group "agent"; use `out agent` to list all sub-interfaces)
+#### 1. AI Agent Basic Interfaces (Group "agent"; use `inspect agent` to list all sub-interfaces)
 
 ```apl
--> out agent
+-> inspect agent
 [agent].sub(chat ctx clr feedback set get info )
 ```
 

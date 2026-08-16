@@ -13,14 +13,15 @@
 
 ```lua
 dll_nlu3/           -- Third-party extension development example
-└── ThirdLib/       # Third-party interface development example
-│   ├── gRunsdk32.lib    # 32-bit SDK import library (for linking at compile time)
-│   ├── gRunsdk64.lib    # 64-bit SDK import library (for linking at compile time)
-│   ├── ThirdBasics.h    # Zhiye third-party access basic interface header (defines interface functions/data structures)
-│   ├── ThirdFunc.cpp    # Zhiye third-party access C++ sample code
-│   └── ThirdLib.vcxproj # VS project configuration (platform toolset)
-├── ThirdLib.sln     # VS solution file (SDK V141: compatible with V141 and above VS SDK)
-└── README.md        # Build guide and example instructions
+├── runtime/           #          
+│   ├── sz_runtime32.lib / sz_runtime64.lib # Zhiye runtime bridge lib
+│   └── sz_runtime.h   # Header for the above libs 
+├── sz_api_ext.cpp / sz_api_ext.h   # sz_runtime.h C/C++ convenience wrapper
+├── ThirdFunc.cpp      # C/C++ interface development example (modify this to write your own functions)
+├── ThirdLib.vcxproj   # VS project configuration (platform toolset)
+├── ThirdLib.sln       # VS solution file (SDK V141: compatible with V141 and above VS SDK)
+└── README.md          # Build guide and example instructions
+
 ```
 
 #### Library Compilation (Windows) Instructions

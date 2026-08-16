@@ -14,10 +14,10 @@
 
 
 
-### 1: Basic Interfaces (Array name `"mk"`: use the `out mk` command to display all subset interfaces)
+### 1: Basic Interfaces (Array name `"mk"`: use the `inspect mk` command to display all subset interfaces)
 
 ```jade
--> out mk
+-> inspect mk
 [mk].sub(unify perimg setfont loadfont loadgui )
 ```
 

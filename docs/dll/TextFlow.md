@@ -10,12 +10,12 @@
 
 # TextFlow Component Library TextFlow.dll Usage Guide
 
-Y-Language Interface Specification (Array names `"str"` and `"json"`: use the `out str` / `out json` commands to display all subset interfaces)
+Y-Language Interface Specification (Array names `"str"` and `"json"`: use the `inspect str` / `inspect json` commands to display all subset interfaces)
 
 ```jade
----<out str
+---<inspect str
 [str].sub(convert find outc replace betweens betweenb )
----<out json
+---<inspect json
 [json].sub(free get load press )
 ```
 
@@ -140,7 +140,23 @@ sub str.find(path, type, subflag/null) // str.find("path", "*.c;*.h");  // all .
 
 
 
-##### 1.7: File Encoding Conversion (convert)
+##### 1.7: String Match Count (count)
+
+| Interface | `str.count`     | Counts how many times a pattern appears in string data                                  |
+| --------- | --------------- | -------------------------------------------------------------------------------------- |
+| Parameter | `data`          | Source data (str)                                                                       |
+| Parameter | `pattern`       | Match pattern (str)                                                                      |
+| Returns   | `int`           | Match count; returns `0` if no match                                                    |
+
+```c
+int str.count(str, pattern)
+// str.count("aabbaa", "aa")      → 2
+// str.count(code, "#include")    → count #include usage
+```
+
+
+
+##### 1.8: File Encoding Conversion (convert)
 
 | Interface | `str.convert` | Converts the encoding of specified files (checks current encoding first; converts only if different from the target, then overwrites the source file) |
 | --------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |

@@ -32,6 +32,15 @@ Supports floating-point and integer values (decimal, hexadecimal, octal).
 
 **Supported escape characters:** `\n`, `\t`, `\r`, `\"`, `\\`, `\xHH`, `\uHHHH`, `\UHHHHHHHH` (Note: `\xHH` is fixed at 2 hex digits on Zhiye platform, not greedy like C/C++)
 
+> **★ Which quote to use**: When content contains `"` or `\` (JSON, Windows paths, code snippets, regex), prefer **nested quoting `'"..."'`** — zero escaping, less error-prone. Use plain `"..."` only for short text with no quotes/backslashes:
+>
+> ```y
+> // Plain "..." — verbose and error-prone
+> json = "{\"name\":\"test\",\"path\":\"C:\\work\"}";
+> // Nested '"..."' — zero escaping, WYSIWYG
+> json = '"{"name":"test","path":"C:\work"}"';
+> ```
+
 ### 3. Byte Buffer Type (Y Language Original)
 
 **Single-quoted byte buffer `'...'`** — stores binary data; supports mixed input formats.

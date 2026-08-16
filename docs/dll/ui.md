@@ -10,10 +10,10 @@
 
 Y-Language Interface Specification
 
-### 1: Basic Interfaces (Group "ui": use `out ui` to list all sub-interfaces)
+### 1: Basic Interfaces (Group "ui": use `inspect ui` to list all sub-interfaces)
 
 ```jade
--> out ui
+-> inspect ui
 [ui].sub(unlockwd wdfill wdline wdpoint lockwd resizemap smap gmap setdpi close cursor recovery backup get save pull fill push open )
 ```
 
@@ -392,16 +392,16 @@ Format 2: ui.wdpoint(hd, (x, y, color))
 | Interface | `ui.wdline` | Draw a line on the canvas (buffered, not yet displayed)                  |
 | --------- | ----------- | ----------------------------------------------------------------------- |
 | Parameter | `hd`        | Lock handle                                                             |
-| Parameter | `x1~x2`     | X range (from x1 to x2)                                                 |
-| Parameter | `y1~y2`     | Y range (from y1 to y2) — draws a line from (x1,y1) to (x2,y2)          |
+| Parameter | `x1..x2`     | X range (from x1 to x2)                                                 |
+| Parameter | `y1..y2`     | Y range (from y1 to y2) — draws a line from (x1,y1) to (x2,y2)          |
 | Parameter | `color`     | Color in 0xAARRGGBB (32-bit), AA = alpha                                |
 | Returns   | `null`      | No return value                                                         |
 
 ```c
-Format 1: ui.wdline(hd, x1~x2, y1~y2, color)
+Format 1: ui.wdline(hd, x1..x2, y1..y2, color)
 // ui.wdline(hd, 10~20, 30~60, 0x00FF00)  → green line from (10,30) to (20,60)
 
-Format 2: ui.wdline(hd, (x1~x2, y1~y2, color))
+Format 2: ui.wdline(hd, (x1..x2, y1..y2, color))
 // For Y interfaces that return the params as one tuple, e.g. ui.wdline(hd, funXY(dd))
 ```
 
@@ -411,17 +411,17 @@ Format 2: ui.wdline(hd, (x1~x2, y1~y2, color))
 | --------- | --------------------- | --------------------------------------------------------------------- |
 | Parameter | `hd`                  | Lock handle                                                           |
 | Parameter | `color`               | Color in 0xAARRGGBB, AA = alpha                                       |
-| Parameter | `x1~x2/null`          | X range to fill (omit = full width)                                   |
-| Parameter | `y1~y2/null`          | Y range to fill (omit = full height)                                  |
+| Parameter | `x1..x2/null`          | X range to fill (omit = full width)                                   |
+| Parameter | `y1..y2/null`          | Y range to fill (omit = full height)                                  |
 | Returns   | `null`                | No return value                                                       |
 
 ```c
-Format 1: ui.wdfill(hd, color, x1~x2/null, y1~y2/null)
+Format 1: ui.wdfill(hd, color, x1..x2/null, y1..y2/null)
 // ui.wdfill(hd, 0xFFFFFF)              → fill whole screen white
-// ui.wdfill(hd, 0x0000FF, 20~50)        → blue from x=20 to x=50
-// ui.wdfill(hd, 0xFFFF00, 20~50, 70~90) → blue rectangle (20..50, 70..90)
+// ui.wdfill(hd, 0x0000FF, 20..50)        → blue from x=20 to x=50
+// ui.wdfill(hd, 0xFFFF00, 20..50, 70..90) → blue rectangle (20..50, 70..90)
 
-Format 2: ui.wdfill(hd, (color, x1~x2/null, y1~y2/null))
+Format 2: ui.wdfill(hd, (color, x1..x2/null, y1..y2/null))
 // For Y interfaces that return the params as one tuple, e.g. ui.wdfill(hd, funWH())
 ```
 

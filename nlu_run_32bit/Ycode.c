@@ -7,3 +7,4 @@ loadlib"dll/TextFlow.dll";
 loadlib"dll/freetype.dll";
 loadlib"dll/mark.dll";
 loadlib"dll/cam.dll";
+out := inspect;
