@@ -15,7 +15,7 @@ Y-Language Interface Specification
 
 ```apl
 -> inspect agent
-[agent].sub(chat ctx clr feedback set get info )
+[agent].sub(chat ctx clr feedback set get seterr info )
 ```
 
 ------
@@ -193,6 +193,27 @@ info = agent.info();
 // JSON result:
 // {"model":"deepseek-chat","api":"openai","url":"https://api.deepseek.com",
 //  "max_steps":10,"temperature":70,"verbose":0,"msgs":3,"initialized":1}
+```
+
+
+
+##### 1.8: Error Code Mapping Import
+
+| Interface | `agent.seterr` | Dynamically import error-code → message mappings to adapt to different LLMs/gateways |
+| --------- | -------------- | ------------------------------------------------------------------------------------- |
+| Parameter | `(code,msg)`   | Subset pairs: code = HTTP status code, msg = friendly error message                   |
+| Returns   | `bool`         | true on success, false on failure                                                     |
+
+`agent.seterr` imports multiple mappings via subset style — each `(code,"msg")` is one subset, comma-separated. On a chat error, dynamically imported messages take priority; **codes without a mapping fall back to the raw response** (`HTTP xxx: <raw body>`):
+
+```y
+// Subset style — import multiple (code,"msg") pairs at once
+agent.seterr( (400,"bad request"),(401,"auth failed"),(402,"insufficient balance"),(422,"invalid params"),(429,"rate limit"),(500,"server error"),(503,"busy") );
+```
+
+```y
+// Single code import
+agent.seterr( (429,"Too many requests, slow down") );
 ```
 
 ------

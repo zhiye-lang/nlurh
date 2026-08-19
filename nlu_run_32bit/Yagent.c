@@ -13,25 +13,29 @@ loadlib"dll/ui.dll";
 loadlib"dll/TextFlow.dll";
 out := inspect;
 contidex = 0;
+
+agent.init();
+fd_agm = agent.open();
 /* UI reference script (you don't need to care about this):
 <tag>FA123467<\tag> 
 <tag>in:FA123467,out:FA123468,stop:FA123469<\tag> 
 <run>
 	focusRound();
-	retchar=agent.chat($FA123467); $FA123467=0;
-	outf("charout.log",sprintf("\n\n%d.==============%s==============\n\n",contidex,localtime(time())),retchar,"\n");
+	retchar=agent.chat(fd_agm, $FA123467); $FA123467=0;
+	//outf("charout.log",sprintf("\n\n%d.==============%s==============\n\n",contidex,localtime(time())),retchar,"\n");
 	contidex++;
 	$FA123469 = 0;
 	ret_msg;
 	while(retchar) {
 		local flagchar = 0;
+		agent.assistant(fd_agm,retchar);
 		str_fd = str.separate_open(retchar, "```y\n", "\n```");
 		while(str_fd) {
 			ret_msg=str.separate_next(str_fd,run_code);
 			if(run_code) {
 				run_ret = runstr(run_code,1);
-				agent.feedback(run_ret);
-				outf("run_out.log",sprintf("\n%d.===%s===execute code===\n",contidex,localtime(time())),run_code,"\n执行结果:",run_ret,"\n");
+				agent.feedback(fd_agm,"[Result] "+run_ret);
+				//outf("run_out.log",sprintf("\n%d.===%s===execute code===\n",contidex,localtime(time())),run_code,"\nresult:",run_ret,"\n");
 				flagchar++;			
 			}
 			else {
@@ -49,8 +53,8 @@ contidex = 0;
 			if($FA123467) {
 				sendRound("User intermediate information："+$FA123467);
 			}
-			retchar=agent.chat($FA123467); $FA123467=0;
-			outf("charout.log",sprintf("\n\n%d.==============%s==============\n\n",contidex,localtime(time())),retchar,"\n");
+			retchar=agent.chat(fd_agm, $FA123467); $FA123467=0;
+			//outf("charout.log",sprintf("\n\n%d.==============%s==============\n\n",contidex,localtime(time())),retchar,"\n");
 			contidex++;
 		}
 		else break;
@@ -58,21 +62,20 @@ contidex = 0;
 	$FA123468 = ret_msg;
 </run>
 */
-agent.init();
-agent.set("api", "openai");
-agent.set("model", "deepseek-v4-pro");
-agent.set("url", "https://api.deepseek.com");
-agent.set("key", "sk-...");
-agent.set("thinking", "disabled"); 
-//agent.set("thinking", "enabled"); 
-//agent.set("reasoning_effort", "high");  
+agent.set(fd_agm, "api", "openai");
+agent.set(fd_agm, "model", "deepseek-v4-pro");
+agent.set(fd_agm, "url", "https://api.deepseek.com");
+agent.set(fd_agm, "key", "sk-...");
+agent.set(fd_agm, "thinking", "disabled");
+//agent.set(fd_agm, "thinking", "enabled");
+//agent.set(fd_agm, "reasoning_effort", "high");
 
 trace("===== agent_demo — Y-orchestrated =====\n");
 sys = '"You are a Zhiye Fusion Platform AI assistant. You are a Y-language expert with 1M-token context.
 
 ══════════════ Interaction Model (CRITICAL — understand this) ══════════════
 1. What you say → what the user sees. Put Y code between ```y and ```, plain text is what the user reads.
-2. Your Y code blocks are auto-executed by the platform. Results arrive as [execution feedback] at the start of your next turn.
+2. Your Y code blocks are auto-executed by the platform. Results arrive as [Result] at the start of your next turn.
 3. No code block = conversation ends. Code block(s) = the loop continues.
 4. You can output multiple ```y blocks in one reply — each is executed separately, all results are accumulated and delivered together.
    ★ Each ```y block is an independent runstr execution. Regular variables DIE when the block ends! Variables shared across blocks MUST use $F tags.
@@ -211,11 +214,11 @@ outf("res/memory.md", "Opened camera window, captured 3 frames to photo0~2.png\n
 The system auto-loads res/memory.md at startup — no need to read it manually.
 "';
 
-agent.clr();
-agent.ctx("system", sys);
+agent.clr(fd_agm);
+agent.ctx(fd_agm, "system", sys);
 sys = inf("res/memory.md");
 if(sys) {
-    agent.ctx("user", "Session memory: " + sys);
+    agent.ctx(fd_agm, "user", "Session memory: " + sys);
     trace("[OK] loaded session memory");
 }
 sys = inf("res/math_lib.y");
@@ -233,28 +236,29 @@ trace("[OK] Y language knowledge injected");
 //================================================================
 def aichat(in)
 {
-	outf("charout.log",sprintf("\n\n>>>>>>>>>>>>>%s<<<<<<<<<<<<<<<\n",localtime(time())),in,"\n");
-	ret_char=agent.chat(in);
+	//outf("charout.log",sprintf("\n\n>>>>>>>>>>>>>%s<<<<<<<<<<<<<<<\n",localtime(time())),in,"\n");
+	ret_char=agent.chat(fd_agm, in);
 	focusRound();
 	ret_msg;
 	while(ret_char) {
 		local flagchar = 0;
-		outf("charout.log",sprintf("\n%d.==============%s==============\n",contidex,localtime(time())),ret_char,"\n");
+		//outf("charout.log",sprintf("\n%d.==============%s==============\n",contidex,localtime(time())),ret_char,"\n");
 		contidex++;
+		agent.assistant(fd_agm,ret_char);
 		str_fd = str.separate_open(ret_char, "```y\n", "\n```");
 		while(str_fd) {
 			ret_msg=str.separate_next(str_fd,run_code);
 			if(run_code) {
 				ret_run = runstr(run_code,1);
-				outf("run_out.log",sprintf("\n%d.===%s=执行代码=\n",contidex,localtime(time())),run_code,"\n执行结果:\n",ret_run,"\n");
-				agent.feedback(ret_run);
-				flagchar++;			
+				//outf("run_out.log",sprintf("\n%d.===%s=execute code=\n",contidex,localtime(time())),run_code,"\nresult:\n",ret_run,"\n");
+				agent.feedback(fd_agm, "[Result] "+ret_run);
+				flagchar++;
 			}
 			else break;
 			sendRound(ret_msg);
 		}
-		str.separate_close(str_fd);	
-		if(flagchar) ret_char=agent.chat("");
+		str.separate_close(str_fd);
+		if(flagchar) ret_char=agent.chat(fd_agm, "");
 		else break;
 	}
 	return ret_msg;
