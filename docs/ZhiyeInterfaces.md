@@ -120,29 +120,6 @@ buf  b64d(str)
 // b64e('112233')                  → "ESIz"
 // b64d("ESIz")                    → ' 11 22 33'
 ```
-#### 1.8: Range Data Generation (range)
-
-| Interface | range | Generate buf data from range parameters            |
-| --------- | ----- | -------------------------------------------------- |
-| Param     | rng   | Range parameter, format: `start~end[:step]`        |
-| Param     | bits  | Bit width, supports: `8`, `16`, `32`               |
-| Return    | buf   | Returns generated little-endian byte sequence data |
-
-```c
-buf range(rng, bits) 
-/*
--> range(1~10,8)
-<- buf[10]' 01 02 03 04 05 06 07 08 09 0A'
--> range(2~10:2,8)
-<- buf[5]' 02 04 06 08 0A'
--> range(1~9:2,8)
-<- buf[5]' 01 03 05 07 09'
--> range(0xAA00~0xAA10,16)
-<- buf[34]' 00 AA 01 AA 02 AA 03 AA 04 AA 05 AA 06 AA 07 AA 08 AA 09 AA 0A AA 0B AA 0C AA 0D AA 0E AA 0F AA 10 AA'
--> range(0x12345678~0x1234567F,32)
-<- buf[32]' 78 56 34 12 79 56 34 12 7A 56 34 12 7B 56 34 12 7C 56 34 12 7D 56 34 12 7E 56 34 12 7F 56 34 12'
-*/
-```
 
 `takat` — an aptly named function: "take at", meaning take + position — phonetically, semantically, and graphemically intuitive.
 
@@ -363,16 +340,23 @@ int  fstat(path, "size")          // file size in bytes
 // fstat("temp.dat", "del")       → true   deleted successfully
 // fstat("data.bin", "size")      → 2048  2KB
 ```
-#### 1.21: Output to File (outf)
+#### 1.21: Output to File (outf / addf)
 
-| Interface | outf     | Output data to file (append mode)                                          |
+| Interface | outf     | Output data to file (truncate mode — clears file before writing)           |
 | --------- | -------- | ------------------------------------------------------------ |
 | Param     | filename | File name                                                    |
 | Param     | data     | Data to output                                               |
-| Return    | int/bool | Returns file content length on success; returns false on failure |
+| Return    | int/bool | Returns written length on success; returns false on failure  |
+
+| Interface | addf     | Output data to file (append mode — appends to end of file)                  |
+| --------- | -------- | ------------------------------------------------------------ |
+| Param     | filename | File name                                                    |
+| Param     | data     | Data to output                                               |
+| Return    | int/bool | Returns appended length on success; returns false on failure |
 
 ```c
-int outf(filename, data ...) // outf("data.bin", ' 11 22 33') -> 3 (Append 3 hex bytes to data.bin file)
+int outf(filename, data ...) // outf("data.bin", ' 11 22 33') -> 3 (clear data.bin, write 3 hex bytes)
+int addf(filename, data ...) // addf("data.txt", "more") -> 4 (append "more" to end of data.txt)
 ```
 
 
@@ -391,20 +375,6 @@ buf inf(filename, 1)       // binary mode
 // text = inf("config.ini")           → string
 // bin  = inf("img.png", 1)           → binary buffer
 // base64_str = b64e(inf("img.png", 1))  → binary read + base64 encode
-```
-
-
-
-#### 1.23: Set Function Priority (setfunc)
-
-| Interface | setfunc   | Adjust function execution priority |
-| --------- | --------- | ---------------------------------- |
-| Param     | func_name | Function name                      |
-| Param     | priority  | Priority value                     |
-| Return    | bool      | Returns true on success            |
-
-```c
-bool setfunc("callback", 1) // setfunc("outf", 2)
 ```
 
 

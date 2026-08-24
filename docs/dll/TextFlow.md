@@ -14,7 +14,7 @@ Y-Language Interface Specification (Array names `"str"` and `"json"`: use the `i
 
 ```jade
 ---<inspect str
-[str].sub(convert find outc replace betweens betweenb )
+[str].sub(convert find outc repln replace betweens betweenb )
 ---<inspect json
 [json].sub(free get load press )
 ```
@@ -111,7 +111,38 @@ buf str.replace(Data, sourc, replace/NULL) // outbuf = str.replace(inf"test.txt"
 
 
 
-##### 1.5: Array Code Output (outc)
+##### 1.5: Region Replacement (repln)
+
+| Interface | `str.repln`     | Region-replaces (or deletes) content between two markers — replaces patch-style edits |
+| --------- | --------------- | ------------------------------------------------------------------------------------- |
+| Parameter | `ioStr`         | Input/output — the string being modified in place                                      |
+| Parameter | `tagStr`        | Start marker (empty = region above `tagEnd`)                                           |
+| Parameter | `tagEnd`        | End marker (empty = region below `tagStr`)                                             |
+| Parameter | `revise/null`   | Replacement content for the region; omit to delete the region                          |
+| Returns   | `bool`          | Success: `true`  Failure: `false` (the string is unchanged)                            |
+
+```y
+bool str.repln(ioStr, tagStr, tagEnd, revise/null);
+// Success: true; Failure: false (codes stays unchanged)
+
+// Typical usage — LLM code editing (replaces patch): read source → multi-point replace → write back:
+codes = inf("demo.c"); // read file into codes
+/* Behavior rules */
+// 1. Middle replace/delete (tagStr non-empty, tagEnd non-empty)
+str.repln(codes, "//BEGIN\n", "\n//END", "new code")   // replace middle
+str.repln(codes, "//BEGIN\n", "\n//END")               // delete middle
+// 2. Prefix replace/delete (tagStr="")
+str.repln(codes, "", "//END", "new header")        // replace start~tagEnd
+str.repln(codes, "", "//END")                      // delete start~tagEnd
+// 3. Suffix replace/delete (tagEnd="")
+str.repln(codes, "//BEGIN", "", "new footer")      // replace tagStr~end
+str.repln(codes, "//BEGIN", "")                    // delete tagStr~end
+outf("demo.c", codes);     // write back the fully edited code
+```
+
+
+
+##### 1.6: Array Code Output (outc)
 
 | Interface | `str.outc`    | Outputs array data as C code, appended to `const_cdata.c`    |
 | --------- | ------------- | ------------------------------------------------------------- |
@@ -125,7 +156,7 @@ bool str.outc(name, data...) // str.outc("data", buf)
 
 
 
-##### 1.6: File Search (find)
+##### 1.7: File Search (find)
 
 | Interface | `str.find`      | Searches for files of specified types starting from a given directory (recursively) |
 | --------- | --------------- | ----------------------------------------------------------------------------------- |
@@ -140,7 +171,7 @@ sub str.find(path, type, subflag/null) // str.find("path", "*.c;*.h");  // all .
 
 
 
-##### 1.7: String Match Count (count)
+##### 1.8: String Match Count (count)
 
 | Interface | `str.count`     | Counts how many times a pattern appears in string data                                  |
 | --------- | --------------- | -------------------------------------------------------------------------------------- |
@@ -156,7 +187,7 @@ int str.count(str, pattern)
 
 
 
-##### 1.8: File Encoding Conversion (convert)
+##### 1.9: File Encoding Conversion (convert)
 
 | Interface | `str.convert` | Converts the encoding of specified files (checks current encoding first; converts only if different from the target, then overwrites the source file) |
 | --------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
